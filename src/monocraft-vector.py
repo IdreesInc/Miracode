@@ -175,50 +175,73 @@ def ignoreDiagonal(pixels, row , col, flipped):
 		return True
 	return False
 
-def convertEdgesToPaths(edges):
-	# Reduce the edges to the least number of separate paths required to draw the character
-	return edges
-
 def drawCharacter(character, glyph, pen):
-	print("Drawing character", character["name"])
+	# print("Drawing character", character["name"])
 	if not character.get("pixels"):
-		print(f"Character {character['name']} has no pixels")
+		# print(f"Character {character['name']} has no pixels")
 		return
-	paths = convertEdgesToPaths(generateEdges(character))
-	if not paths:
-		print(f"Character {character['name']} has no paths")
+	edges = generateEdges(character)
 
 	descent = 0
 	if "descent" in character:
 		descent = character["descent"]
 	top = (len(character["pixels"]) - descent) * PIXEL_SIZE
 
-	# Draw the paths
-	for path in paths:
-		for i in range(len(path)):
-			x = path[i][0] * PIXEL_SIZE + PIXEL_SIZE / 2
-			y = top - path[i][1] * PIXEL_SIZE + PIXEL_SIZE / 2
-			if i == 0:
-				pen.moveTo(x, y)
-			else:
-				pen.lineTo(x, y)
-		pen.endPath()
-
-	# Merge intersecting paths
-	glyph.simplify()
-
 	# Draw isolated pixels
 	pixels = character["pixels"]
 	for row in range(len(pixels)):
 		for col in range(len(pixels[0])):
 			if pixels[row][col] == 1:
-				if get(pixels, row - 1, col) != 1 and get(pixels, row, col - 1) != 1 and get(pixels, row + 1, col) != 1 and get(pixels, row, col + 1) != 1:
-					pen.moveTo(col * PIXEL_SIZE + PIXEL_SIZE / 2, top - row * PIXEL_SIZE + PIXEL_SIZE / 2)
-					pen.lineTo(col * PIXEL_SIZE + PIXEL_SIZE / 2, top - row * PIXEL_SIZE + PIXEL_SIZE / 2 + 1)
-					pen.endPath()
+				# if get(pixels, row - 1, col) != 1 and get(pixels, row, col - 1) != 1 and get(pixels, row + 1, col) != 1 and get(pixels, row, col + 1) != 1:
+				pen.moveTo(col * PIXEL_SIZE + PIXEL_SIZE / 2, top - row * PIXEL_SIZE + PIXEL_SIZE / 2)
+				pen.lineTo(col * PIXEL_SIZE + PIXEL_SIZE / 2, top - row * PIXEL_SIZE + PIXEL_SIZE / 2 + 0.001)
+				pen.endPath()
+
+	STROKE = 415
+	HALF = STROKE / 2
 
 	# Expand the stroke
-	glyph.stroke("circular", 415)
+	glyph.stroke("circular", STROKE)
+
+	SQRT_TWO = 1.41421
+
+	# Draw the paths
+	for edge in edges:
+		startX = edge[0][0] * PIXEL_SIZE + PIXEL_SIZE / 2
+		startY = top - (edge[0][1] * PIXEL_SIZE - PIXEL_SIZE / 2)
+		endX = edge[1][0] * PIXEL_SIZE + PIXEL_SIZE / 2
+		endY = top - (edge[1][1] * PIXEL_SIZE - PIXEL_SIZE / 2)
+		if startX == endX:
+			# Down
+			pen.moveTo(startX - HALF, startY)
+			pen.lineTo(startX + HALF, startY)
+			pen.lineTo(startX + HALF, endY)
+			pen.lineTo(startX - HALF, endY)
+			pen.closePath()
+		elif startY == endY:
+			# Right
+			pen.moveTo(startX, startY - HALF)
+			pen.lineTo(startX, startY + HALF)
+			pen.lineTo(endX, startY + HALF)
+			pen.lineTo(endX, startY - HALF)
+			pen.closePath()
+		elif startX < endX:
+			# Diagonal right
+			pen.moveTo(startX - HALF / SQRT_TWO, startY - HALF / SQRT_TWO)
+			pen.lineTo(startX + HALF / SQRT_TWO, startY + HALF / SQRT_TWO)
+			pen.lineTo(endX + HALF / SQRT_TWO, endY + HALF / SQRT_TWO)
+			pen.lineTo(endX - HALF / SQRT_TWO, endY - HALF / SQRT_TWO)
+			pen.closePath()
+		else:
+			# Diagonal left
+			pen.moveTo(startX - HALF / SQRT_TWO, startY + HALF / SQRT_TWO)
+			pen.lineTo(startX + HALF / SQRT_TWO, startY - HALF / SQRT_TWO)
+			pen.lineTo(endX + HALF / SQRT_TWO, endY - HALF / SQRT_TWO)
+			pen.lineTo(endX - HALF / SQRT_TWO, endY + HALF / SQRT_TWO)
+			pen.closePath()
+
+	# Merge intersecting paths
+	glyph.simplify()
 
 def interp(p1, p2, t):
 	return (p1[0] + (p2[0] - p1[0]) * t, p1[1] + (p2[1] - p1[1]) * t)
