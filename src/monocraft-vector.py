@@ -27,7 +27,7 @@ PIXEL_SIZE = 512
 characters = json.load(open("./characters.json"))
 diacritics = json.load(open("./diacritics.json"))
 ligatures = json.load(open("./ligatures.json"))
-ligatures += generate_continuous_ligatures("./continuous_ligatures.json")
+# ligatures += generate_continuous_ligatures("./continuous_ligatures.json")
 
 characters = generateDiacritics(characters, diacritics)
 charactersByCodepoint = {}
@@ -39,7 +39,7 @@ def generateFont():
 	monocraft.fullname = "Monocraft Vector"
 	monocraft.copyright = "Idrees Hassan, https://github.com/IdreesInc/Monocraft-Vector"
 	monocraft.encoding = "UnicodeFull"
-	monocraft.version = "3.0"
+	monocraft.version = "1.0"
 	monocraft.weight = "Regular"
 	monocraft.ascent = PIXEL_SIZE * 8
 	monocraft.descent = PIXEL_SIZE
@@ -68,15 +68,14 @@ def generateFont():
 	if not os.path.exists(outputDir):
 		os.makedirs(outputDir)
 
-	# monocraft.generate(outputDir + "Monocraft-Vector-no-ligatures.ttf")
-	# for ligature in ligatures:
-	# 	lig = monocraft.createChar(-1, ligature["name"])
-	# 	pen = monocraft[ligature["name"]].glyphPen()
-	# 	image, kw = generateImage(ligature)
-	# 	drawImage(image, pen, **kw)
-	# 	monocraft[ligature["name"]].width = PIXEL_SIZE * len(ligature["sequence"]) * 6
-	# 	lig.addPosSub("ligatures-subtable", tuple(map(lambda codepoint: charactersByCodepoint[codepoint]["name"], ligature["sequence"])))
-	# print(f"Generated {len(ligatures)} ligatures")
+	monocraft.generate(outputDir + "Monocraft-Vector-no-ligatures.ttf")
+	for ligature in ligatures:
+		lig = monocraft.createChar(-1, ligature["name"])
+		pen = monocraft[ligature["name"]].glyphPen()
+		drawCharacter(ligature, lig, pen)
+		monocraft[ligature["name"]].width = PIXEL_SIZE * len(ligature["sequence"]) * 6
+		lig.addPosSub("ligatures-subtable", tuple(map(lambda codepoint: charactersByCodepoint[codepoint]["name"], ligature["sequence"])))
+	print(f"Generated {len(ligatures)} ligatures")
 
 	monocraft.generate(outputDir + "Monocraft-Vector.ttf")
 	monocraft.generate(outputDir + "Monocraft-Vector.otf")
@@ -194,10 +193,9 @@ def drawCharacter(character, glyph, pen):
 			if pixels[row][col] == 1:
 				# if get(pixels, row - 1, col) != 1 and get(pixels, row, col - 1) != 1 and get(pixels, row + 1, col) != 1 and get(pixels, row, col + 1) != 1:
 				pen.moveTo(col * PIXEL_SIZE + PIXEL_SIZE / 2, top - row * PIXEL_SIZE + PIXEL_SIZE / 2)
-				pen.lineTo(col * PIXEL_SIZE + PIXEL_SIZE / 2, top - row * PIXEL_SIZE + PIXEL_SIZE / 2 + 0.001)
 				pen.endPath()
 
-	STROKE = 415
+	STROKE = 370
 	HALF = STROKE / 2
 
 	# Expand the stroke
