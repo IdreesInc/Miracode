@@ -247,15 +247,20 @@ def drawCharacter(character, glyph, pen):
 		descent = character["descent"]
 	top = (len(character["pixels"]) - descent) * PIXEL_SIZE
 
+	leftMargin = 0
+	if "leftMargin" in character:
+		leftMargin = character["leftMargin"]
+	left = leftMargin * PIXEL_SIZE
+
 	STROKE = 192
 	HALF = STROKE / 2
 	DOT_RADIUS = HALF * 1.5
 
 	# Draw the paths
 	for edge in edges:
-		startX = edge[0][0] * PIXEL_SIZE + PIXEL_SIZE / 2
+		startX = edge[0][0] * PIXEL_SIZE + PIXEL_SIZE / 2 + left
 		startY = top - (edge[0][1] * PIXEL_SIZE - PIXEL_SIZE / 2)
-		endX = edge[1][0] * PIXEL_SIZE + PIXEL_SIZE / 2
+		endX = edge[1][0] * PIXEL_SIZE + PIXEL_SIZE / 2 + left
 		endY = top - (edge[1][1] * PIXEL_SIZE - PIXEL_SIZE / 2)
 		if startX == endX:
 			# Down
@@ -313,7 +318,7 @@ def drawCharacter(character, glyph, pen):
 	for row in range(len(pixels)):
 		for col in range(len(pixels[0])):
 			if pixels[row][col] == 1:
-				x = col * PIXEL_SIZE + PIXEL_SIZE / 2
+				x = col * PIXEL_SIZE + PIXEL_SIZE / 2 + left
 				y = top - row * PIXEL_SIZE + PIXEL_SIZE / 2
 				if countNeighbors(pixels, row, col) == 0:
 					# Isolated dot
@@ -328,9 +333,6 @@ def drawCharacter(character, glyph, pen):
 	glyph.simplify()
 	glyph.round()
 	glyph.removeOverlap()
-
-def interp(p1, p2, t):
-	return (p1[0] + (p2[0] - p1[0]) * t, p1[1] + (p2[1] - p1[1]) * t)
 
 generateFont()
 generateExamples(characters, ligatures, charactersByCodepoint)
