@@ -174,6 +174,38 @@ def ignoreDiagonal(pixels, row , col, flipped):
 		return True
 	return False
 
+def countNeighbors(pixels, row, col):
+	count = 0
+	if get(pixels, row - 1, col) == 1:
+		count += 1
+	if get(pixels, row, col - 1) == 1:
+		count += 1
+	if get(pixels, row + 1, col) == 1:
+		count += 1
+	if get(pixels, row, col + 1) == 1:
+		count += 1
+	if get(pixels, row - 1, col - 1) == 1:
+		count += 1
+	if get(pixels, row - 1, col + 1) == 1:
+		count += 1
+	if get(pixels, row + 1, col - 1) == 1:
+		count += 1
+	if get(pixels, row + 1, col + 1) == 1:
+		count += 1
+	return count
+
+def countEnds(pixels, row, col):
+	count = 0
+	if get(pixels, row - 1, col) != get(pixels, row + 1, col):
+		count += 1
+	if get(pixels, row, col - 1) != get(pixels, row, col + 1):
+		count += 1
+	if get(pixels, row - 1, col - 1) != get(pixels, row + 1, col + 1):
+		count += 1
+	if get(pixels, row - 1, col + 1) != get(pixels, row + 1, col - 1):
+		count += 1
+	return count
+
 def drawCharacter(character, glyph, pen):
 	# print("Drawing character", character["name"])
 	if not character.get("pixels"):
@@ -181,27 +213,35 @@ def drawCharacter(character, glyph, pen):
 		return
 	edges = generateEdges(character)
 
+	edgesPerPoint = {}
+	for edge in edges:
+		if edge[0] not in edgesPerPoint:
+			edgesPerPoint[edge[0]] = []
+		edgesPerPoint[edge[0]].append(edge)
+		if edge[1] not in edgesPerPoint:
+			edgesPerPoint[edge[1]] = []
+		edgesPerPoint[edge[1]].append(edge)
+
 	descent = 0
 	if "descent" in character:
 		descent = character["descent"]
 	top = (len(character["pixels"]) - descent) * PIXEL_SIZE
 
-	# Draw isolated pixels
+	# Draw the dots
 	pixels = character["pixels"]
 	for row in range(len(pixels)):
 		for col in range(len(pixels[0])):
 			if pixels[row][col] == 1:
-				# if get(pixels, row - 1, col) != 1 and get(pixels, row, col - 1) != 1 and get(pixels, row + 1, col) != 1 and get(pixels, row, col + 1) != 1:
-				pen.moveTo(col * PIXEL_SIZE + PIXEL_SIZE / 2, top - row * PIXEL_SIZE + PIXEL_SIZE / 2)
-				pen.endPath()
+				if countNeighbors(pixels, row, col) == 0:
+					pen.moveTo(col * PIXEL_SIZE + PIXEL_SIZE / 2, top - row * PIXEL_SIZE + PIXEL_SIZE / 2)
+					pen.endPath()
 
-	STROKE = 370
+	STROKE = 400
 	HALF = STROKE / 2
-
-	# Expand the stroke
-	glyph.stroke("circular", STROKE)
-
 	SQRT_TWO = 1.41421
+
+	# Expand the stroke for the dots
+	glyph.stroke("circular", STROKE * 1.2)
 
 	# Draw the paths
 	for edge in edges:
