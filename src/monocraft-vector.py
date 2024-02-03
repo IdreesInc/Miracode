@@ -76,8 +76,9 @@ def generateFont():
 		monocraft[ligature["name"]].width = PIXEL_SIZE * len(ligature["sequence"]) * 6
 		lig.addPosSub("ligatures-subtable", tuple(map(lambda codepoint: charactersByCodepoint[codepoint]["name"], ligature["sequence"])))
 	print(f"Generated {len(ligatures)} ligatures")
-
+	print("Generating TTF font...")
 	monocraft.generate(outputDir + "Monocraft-Vector.ttf")
+	print("Generating OTF font...")
 	monocraft.generate(outputDir + "Monocraft-Vector.otf")
 
 def get(pixel, row , col):
@@ -194,17 +195,15 @@ def countNeighbors(pixels, row, col):
 		count += 1
 	return count
 
-def countEnds(pixels, row, col):
-	count = 0
-	if get(pixels, row - 1, col) != get(pixels, row + 1, col):
-		count += 1
-	if get(pixels, row, col - 1) != get(pixels, row, col + 1):
-		count += 1
-	if get(pixels, row - 1, col - 1) != get(pixels, row + 1, col + 1):
-		count += 1
-	if get(pixels, row - 1, col + 1) != get(pixels, row + 1, col - 1):
-		count += 1
-	return count
+def drawCircle(pen, x, y, radius):
+	# Draw clockwise
+	VAL = 0.5522847498 # This is (4/3) * (sqrt(2) - 1)
+	pen.moveTo(x, y + radius)
+	pen.curveTo(x + radius * VAL, y + radius, x + radius, y + radius * VAL, x + radius, y)
+	pen.curveTo(x + radius, y - radius * VAL, x + radius * VAL, y - radius, x, y - radius)
+	pen.curveTo(x - radius * VAL, y - radius, x - radius, y - radius * VAL, x - radius, y)
+	pen.curveTo(x - radius, y + radius * VAL, x - radius * VAL, y + radius, x, y + radius)
+	pen.closePath()
 
 def drawCharacter(character, glyph, pen):
 	# print("Drawing character", character["name"])
@@ -227,21 +226,10 @@ def drawCharacter(character, glyph, pen):
 		descent = character["descent"]
 	top = (len(character["pixels"]) - descent) * PIXEL_SIZE
 
-	# Draw the dots
-	pixels = character["pixels"]
-	for row in range(len(pixels)):
-		for col in range(len(pixels[0])):
-			if pixels[row][col] == 1:
-				if countNeighbors(pixels, row, col) == 0:
-					pen.moveTo(col * PIXEL_SIZE + PIXEL_SIZE / 2, top - row * PIXEL_SIZE + PIXEL_SIZE / 2)
-					pen.endPath()
-
 	STROKE = 400
 	HALF = STROKE / 2
+	DOT_RADIUS = HALF * 1.3
 	SQRT_TWO = 1.41421
-
-	# Expand the stroke for the dots
-	glyph.stroke("circular", STROKE * 1.2)
 
 	# Draw the paths
 	for edge in edges:
@@ -277,6 +265,42 @@ def drawCharacter(character, glyph, pen):
 			pen.lineTo(endX + HALF / SQRT_TWO, endY - HALF / SQRT_TWO)
 			pen.lineTo(endX - HALF / SQRT_TWO, endY + HALF / SQRT_TWO)
 			pen.closePath()
+
+
+	jointAtPoint = {}
+	# Calculate if each point has any joints that aren't in a straight line
+	# For instance, a joint coming from the left and a joint coming from the top or just a joint coming from the left
+	for point, edges in edgesPerPoint.items():
+		if len(edges) == 1:
+			# End cap
+			jointAtPoint[point] = 1
+		elif len(edges) == 2:
+			# Determine if the edges are in a straight line
+			edge1 = edges[0]
+			edge2 = edges[1]
+			if edge1[0][0] == edge1[1][0] and edge2[0][0] == edge2[1][0]:
+				# Vertical
+				jointAtPoint[point] = 0
+			elif edge1[0][1] == edge1[1][1] and edge2[0][1] == edge2[1][1]:
+				# Horizontal
+				jointAtPoint[point] = 0
+		else:
+			# Joint
+			jointAtPoint[point] = 1
+
+	# Draw the dots
+	pixels = character["pixels"]
+	for row in range(len(pixels)):
+		for col in range(len(pixels[0])):
+			if pixels[row][col] == 1:
+				rad = HALF
+				if countNeighbors(pixels, row, col) == 0:
+					# Isolated dot
+					rad = DOT_RADIUS
+				elif jointAtPoint.get((col, row)) == 0:
+					# No joint or end cap
+					continue
+				drawCircle(pen, col * PIXEL_SIZE + PIXEL_SIZE / 2, top - row * PIXEL_SIZE + PIXEL_SIZE / 2, rad)
 
 	# Merge intersecting paths
 	glyph.simplify()
