@@ -22,7 +22,8 @@ from generate_examples import generateExamples
 from polygonizer import PixelImage, generatePolygons
 from generate_continuous_ligatures import generate_continuous_ligatures 
 
-PIXEL_SIZE = 512
+PIXEL_SIZE = 256
+SQRT_TWO = math.sqrt(2)
 
 characters = json.load(open("./characters.json"))
 diacritics = json.load(open("./diacritics.json"))
@@ -78,8 +79,8 @@ def generateFont():
 	print(f"Generated {len(ligatures)} ligatures")
 	print("Generating TTF font...")
 	monocraft.generate(outputDir + "Monocraft-Vector.ttf")
-	print("Generating OTF font...")
-	monocraft.generate(outputDir + "Monocraft-Vector.otf")
+	# print("Generating OTF font...")
+	# monocraft.generate(outputDir + "Monocraft-Vector.otf")
 
 def get(pixel, row , col):
 	if row < 0 or col < 0:
@@ -205,6 +206,26 @@ def drawCircle(pen, x, y, radius):
 	pen.curveTo(x - radius, y + radius * VAL, x - radius * VAL, y + radius, x, y + radius)
 	pen.closePath()
 
+
+def drawOctagon(pen, x, y, radius):
+	# Draw clockwise
+	VAL = (1 + SQRT_TWO) / 2
+	sideLength = radius / VAL
+	OCTAGON = [
+		(1/2, VAL),
+		(VAL, 1/2),
+		(VAL, -1/2),
+		(1/2, -VAL),
+		(-1/2, -VAL),
+		(-VAL, -1/2),
+		(-VAL, 1/2),
+		(-1/2, VAL)
+	]
+	pen.moveTo(x + sideLength * OCTAGON[0][0], y + sideLength * OCTAGON[0][1])
+	for i in range(1, len(OCTAGON)):
+		pen.lineTo(x + sideLength * OCTAGON[i][0], y + sideLength * OCTAGON[i][1])
+	pen.closePath()
+
 def drawCharacter(character, glyph, pen):
 	# print("Drawing character", character["name"])
 	if not character.get("pixels"):
@@ -226,10 +247,9 @@ def drawCharacter(character, glyph, pen):
 		descent = character["descent"]
 	top = (len(character["pixels"]) - descent) * PIXEL_SIZE
 
-	STROKE = 400
+	STROKE = 192
 	HALF = STROKE / 2
-	DOT_RADIUS = HALF * 1.3
-	SQRT_TWO = 1.41421
+	DOT_RADIUS = HALF * 1.5
 
 	# Draw the paths
 	for edge in edges:
@@ -293,17 +313,21 @@ def drawCharacter(character, glyph, pen):
 	for row in range(len(pixels)):
 		for col in range(len(pixels[0])):
 			if pixels[row][col] == 1:
-				rad = HALF
+				x = col * PIXEL_SIZE + PIXEL_SIZE / 2
+				y = top - row * PIXEL_SIZE + PIXEL_SIZE / 2
 				if countNeighbors(pixels, row, col) == 0:
 					# Isolated dot
-					rad = DOT_RADIUS
+					drawCircle(pen, x, y, DOT_RADIUS)
+					continue
 				elif jointAtPoint.get((col, row)) == 0:
 					# No joint or end cap
 					continue
-				drawCircle(pen, col * PIXEL_SIZE + PIXEL_SIZE / 2, top - row * PIXEL_SIZE + PIXEL_SIZE / 2, rad)
+				drawOctagon(pen, x, y, HALF)
 
 	# Merge intersecting paths
 	glyph.simplify()
+	glyph.round()
+	glyph.removeOverlap()
 
 def interp(p1, p2, t):
 	return (p1[0] + (p2[0] - p1[0]) * t, p1[1] + (p2[1] - p1[1]) * t)
