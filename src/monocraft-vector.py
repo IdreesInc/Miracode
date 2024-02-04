@@ -249,6 +249,25 @@ def drawOctagon(pen, x, y, radius):
 		pen.lineTo(x + sideLength * OCTAGON[i][0], y + sideLength * OCTAGON[i][1])
 	pen.closePath()
 
+def drawHeart(pen, x, y, radius):
+	# Draw clockwise
+	HEART = [
+		(0, 0.9),
+		(0.8, 1.6),
+		(1.6, 0.9),
+		(1.6, 0.2),
+		(0, -1),
+		(-1.6, 0.2),
+		(-1.6, 0.9),
+		(-0.8, 1.6)
+	]
+	SCALE = 1.2
+	radius *= SCALE
+	pen.moveTo(x + radius * HEART[0][0], y + radius * HEART[0][1])
+	for i in range(1, len(HEART)):
+		pen.lineTo(x + radius * HEART[i][0], y + radius * HEART[i][1])
+	pen.closePath()
+
 def drawCharacter(character, glyph, pen, xOffset = 0):
 	# print("Drawing character", character["name"])
 	if not character.get("pixels"):
@@ -340,9 +359,9 @@ def drawCharacter(character, glyph, pen, xOffset = 0):
 	pixels = character["pixels"]
 	for row in range(len(pixels)):
 		for col in range(len(pixels[0])):
+			x = col * PIXEL_SIZE + PIXEL_SIZE / 2 + left
+			y = top - row * PIXEL_SIZE + PIXEL_SIZE / 2
 			if pixels[row][col] == 1:
-				x = col * PIXEL_SIZE + PIXEL_SIZE / 2 + left
-				y = top - row * PIXEL_SIZE + PIXEL_SIZE / 2
 				if countNeighbors(pixels, row, col) == 0:
 					# Isolated dot
 					drawCircle(pen, x, y, DOT_RADIUS)
@@ -351,6 +370,9 @@ def drawCharacter(character, glyph, pen, xOffset = 0):
 					# No joint or end cap
 					continue
 				drawOctagon(pen, x, y, HALF)
+			elif pixels[row][col] == 2:
+				# Heart
+				drawHeart(pen, x, y, HALF)
 
 	# Merge intersecting paths
 	glyph.simplify()
