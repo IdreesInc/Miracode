@@ -49,11 +49,7 @@ def generateFont():
 	miracode.addLookup("ligatures", "gsub_ligature", (), (("liga",(("dflt",("dflt")),("latn",("dflt")))),))
 	miracode.addLookupSubtable("ligatures", "ligatures-subtable")
 
-	count = 0
 	for character in characters:
-		count += 1
-		# if count > 40:
-		# 	break
 		charactersByCodepoint[character["codepoint"]] = character
 		miracode.createChar(character["codepoint"], character["name"])
 		pen = miracode[character["name"]].glyphPen()
@@ -158,7 +154,7 @@ def generateEdges(character):
 
 def ignoreDiagonal(pixels, row , col, flipped):
 	colMod = -1 if flipped else 1
-	if get(pixels, row + 1, col) == 1 and (get(pixels, row - 1, col - colMod) != 1 or get(pixels, row + 2, col) == 1):
+	if get(pixels, row + 1, col) == 1 and (get(pixels, row - 1, col - colMod) != 1 or get(pixels, row + 2, col) == 1) and (get(pixels, row + 2, col + 2 * colMod) != 1 or get(pixels, row, col + 2 * colMod) == 1):
 		# Disallowed (H)
 		# X 0 0 
 		# 1 1 1
@@ -168,10 +164,18 @@ def ignoreDiagonal(pixels, row , col, flipped):
 		# 0 X 0
 		# 1 1 1
 		# 0 1 0
+		# Disallowed (k)
+		# X 0 1
+		# 1 1 0
+		# 1 0 1
 		# Allowed (z)
 		# 1 0 0
 		# 0 X 0
 		# 1 1 1
+		# Allowed (M)
+		# X 0 0
+		# 1 1 0
+		# 1 0 1
 		return True
 	elif get(pixels, row, col + colMod) == 1 and get(pixels, row + 2, col + colMod) == 1 and get(pixels, row - 1, col) != 0:
 		# Disallowed (l)
