@@ -1,4 +1,4 @@
-# Monocraft Vector
+# Miracode
 # Copyright (C) 2022-2023 Idrees Hassan
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -34,20 +34,20 @@ characters = generateDiacritics(characters, diacritics)
 charactersByCodepoint = {}
 
 def generateFont():
-	monocraft = fontforge.font()
-	monocraft.fontname = "Monocraft-Vector"
-	monocraft.familyname = "Monocraft Vector"
-	monocraft.fullname = "Monocraft Vector"
-	monocraft.copyright = "Idrees Hassan, https://github.com/IdreesInc/Monocraft-Vector"
-	monocraft.encoding = "UnicodeFull"
-	monocraft.version = "1.0"
-	monocraft.weight = "Regular"
-	monocraft.ascent = PIXEL_SIZE * 8
-	monocraft.descent = PIXEL_SIZE
-	monocraft.em = PIXEL_SIZE * 9
-	monocraft.upos = -PIXEL_SIZE # Underline position
-	monocraft.addLookup("ligatures", "gsub_ligature", (), (("liga",(("dflt",("dflt")),("latn",("dflt")))),))
-	monocraft.addLookupSubtable("ligatures", "ligatures-subtable")
+	miracode = fontforge.font()
+	miracode.fontname = "Miracode"
+	miracode.familyname = "Miracode"
+	miracode.fullname = "Miracode"
+	miracode.copyright = "Idrees Hassan, https://github.com/IdreesInc/Miracode"
+	miracode.encoding = "UnicodeFull"
+	miracode.version = "1.0"
+	miracode.weight = "Regular"
+	miracode.ascent = PIXEL_SIZE * 8
+	miracode.descent = PIXEL_SIZE
+	miracode.em = PIXEL_SIZE * 9
+	miracode.upos = -PIXEL_SIZE # Underline position
+	miracode.addLookup("ligatures", "gsub_ligature", (), (("liga",(("dflt",("dflt")),("latn",("dflt")))),))
+	miracode.addLookupSubtable("ligatures", "ligatures-subtable")
 
 	count = 0
 	for character in characters:
@@ -55,14 +55,14 @@ def generateFont():
 		# if count > 40:
 		# 	break
 		charactersByCodepoint[character["codepoint"]] = character
-		monocraft.createChar(character["codepoint"], character["name"])
-		pen = monocraft[character["name"]].glyphPen()
+		miracode.createChar(character["codepoint"], character["name"])
+		pen = miracode[character["name"]].glyphPen()
 		top = 0
 		drawn = character
 
-		drawCharacter(character, monocraft[character["name"]], pen)
+		drawCharacter(character, miracode[character["name"]], pen)
 
-		monocraft[character["name"]].width = PIXEL_SIZE * 6
+		miracode[character["name"]].width = PIXEL_SIZE * 6
 	print(f"Generated {len(characters)} characters")
 
 	outputDir = "../dist/"
@@ -70,21 +70,21 @@ def generateFont():
 		os.makedirs(outputDir)
 
 	# Generate the font without ligatures
-	print("Generating TTF font without ligatures...")
-	monocraft.generate(outputDir + "Monocraft-Vector-no-ligatures.ttf")
+	# print("Generating TTF font without ligatures...")
+	# miracode.generate(outputDir + "Miracode-no-ligatures.ttf")
 
 	for ligature in ligatures:
 		if ligature.get("pixels"):
 			# Basic ligature
-			lig = monocraft.createChar(-1, ligature["name"])
-			pen = monocraft[ligature["name"]].glyphPen()
+			lig = miracode.createChar(-1, ligature["name"])
+			pen = miracode[ligature["name"]].glyphPen()
 			drawCharacter(ligature, lig, pen)
-			monocraft[ligature["name"]].width = PIXEL_SIZE * len(ligature["sequence"]) * 6
+			miracode[ligature["name"]].width = PIXEL_SIZE * len(ligature["sequence"]) * 6
 		elif ligature.get("chain"):
 			# Chain ligature
 			chain = ligature["chain"]
-			lig = monocraft.createChar(-1, ligature["name"])
-			pen = monocraft[ligature["name"]].glyphPen()
+			lig = miracode.createChar(-1, ligature["name"])
+			pen = miracode[ligature["name"]].glyphPen()
 			xOffset = 0
 			print("Lig: ", ligature["name"])
 			for character in chain:
@@ -96,14 +96,14 @@ def generateFont():
 				else:
 					print(f"Unexpected character in ligature {ligature['name']}: {character}")
 				xOffset += PIXEL_SIZE
-			monocraft[ligature["name"]].width = round(xOffset - PIXEL_SIZE)
+			miracode[ligature["name"]].width = round(xOffset - PIXEL_SIZE)
 		lig.addPosSub("ligatures-subtable", tuple(map(lambda codepoint: charactersByCodepoint[codepoint]["name"], ligature["sequence"])))
 
 	print(f"Generated {len(ligatures)} ligatures")
 	print("Generating TTF font...")
-	monocraft.generate(outputDir + "Monocraft-Vector.ttf")
+	miracode.generate(outputDir + "Miracode.ttf")
 	# print("Generating OTF font...")
-	# monocraft.generate(outputDir + "Monocraft-Vector.otf")
+	# miracode.generate(outputDir + "Miracode.otf")
 
 def get(pixel, row , col):
 	if row < 0 or col < 0:

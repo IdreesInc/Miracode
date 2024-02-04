@@ -187,5 +187,46 @@
 				"reference": 97
 			}
 		]
+    },
+	{
+        "ligature": "Miracode",
+        "name": "miracode",
+        "sequence": [77, 105, 114, 97, 99, 111, 100, 101],
+        "chain": [
+			{
+				"reference": 77
+			},
+			{
+				"pixels": [
+					[0, 0, 0, 0, 0],
+					[0, 0, 2, 0, 0],
+					[0, 0, 0, 0, 0],
+					[0, 1, 1, 0, 0],
+					[0, 0, 1, 0, 0],
+					[0, 0, 1, 0, 0],
+					[0, 0, 1, 0, 0],
+					[0, 0, 0, 1, 1]
+				],
+				"leftMargin": -0.5
+			},
+			{
+				"reference": 114
+			},
+			{
+				"reference": 97
+			},
+			{
+				"reference": 99
+			},
+			{
+				"reference": 111
+			},
+			{
+				"reference": 100
+			},
+			{
+				"reference": 101
+			}
+		]
     }
 ]
