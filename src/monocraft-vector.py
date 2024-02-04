@@ -380,7 +380,7 @@ def drawCharacter(character, glyph, pen, xOffset = 0):
 	glyph.removeOverlap()
 
 	# Return the rightmost edge of the character
-	return left + len(pixels[0]) * PIXEL_SIZE
+	return xOffset + len(pixels[0]) * PIXEL_SIZE
 
 generateFont()
 generateExamples(characters, ligatures, charactersByCodepoint)
