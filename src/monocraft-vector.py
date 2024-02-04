@@ -69,13 +69,36 @@ def generateFont():
 	if not os.path.exists(outputDir):
 		os.makedirs(outputDir)
 
+	# Generate the font without ligatures
+	print("Generating TTF font without ligatures...")
 	monocraft.generate(outputDir + "Monocraft-Vector-no-ligatures.ttf")
+
 	for ligature in ligatures:
-		lig = monocraft.createChar(-1, ligature["name"])
-		pen = monocraft[ligature["name"]].glyphPen()
-		drawCharacter(ligature, lig, pen)
-		monocraft[ligature["name"]].width = PIXEL_SIZE * len(ligature["sequence"]) * 6
+		if ligature.get("pixels"):
+			# Basic ligature
+			lig = monocraft.createChar(-1, ligature["name"])
+			pen = monocraft[ligature["name"]].glyphPen()
+			drawCharacter(ligature, lig, pen)
+			monocraft[ligature["name"]].width = PIXEL_SIZE * len(ligature["sequence"]) * 6
+		elif ligature.get("chain"):
+			# Chain ligature
+			chain = ligature["chain"]
+			lig = monocraft.createChar(-1, ligature["name"])
+			pen = monocraft[ligature["name"]].glyphPen()
+			xOffset = 0
+			print("Lig: ", ligature["name"])
+			for character in chain:
+				if character.get("pixels"):
+					xOffset = drawCharacter(character, lig, pen, xOffset)
+				elif character.get("reference"):
+					linkedCharacter = charactersByCodepoint[character["reference"]]
+					xOffset = drawCharacter(linkedCharacter, lig, pen, xOffset)
+				else:
+					print(f"Unexpected character in ligature {ligature['name']}: {character}")
+				xOffset += PIXEL_SIZE
+			monocraft[ligature["name"]].width = round(xOffset - PIXEL_SIZE)
 		lig.addPosSub("ligatures-subtable", tuple(map(lambda codepoint: charactersByCodepoint[codepoint]["name"], ligature["sequence"])))
+
 	print(f"Generated {len(ligatures)} ligatures")
 	print("Generating TTF font...")
 	monocraft.generate(outputDir + "Monocraft-Vector.ttf")
@@ -226,7 +249,7 @@ def drawOctagon(pen, x, y, radius):
 		pen.lineTo(x + sideLength * OCTAGON[i][0], y + sideLength * OCTAGON[i][1])
 	pen.closePath()
 
-def drawCharacter(character, glyph, pen):
+def drawCharacter(character, glyph, pen, xOffset = 0):
 	# print("Drawing character", character["name"])
 	if not character.get("pixels"):
 		# print(f"Character {character['name']} has no pixels")
@@ -249,8 +272,8 @@ def drawCharacter(character, glyph, pen):
 
 	leftMargin = 0
 	if "leftMargin" in character:
-		leftMargin = character["leftMargin"]
-	left = leftMargin * PIXEL_SIZE
+		leftMargin += character["leftMargin"]
+	left = leftMargin * PIXEL_SIZE + xOffset
 
 	STROKE = 192
 	HALF = STROKE / 2
@@ -333,6 +356,9 @@ def drawCharacter(character, glyph, pen):
 	glyph.simplify()
 	glyph.round()
 	glyph.removeOverlap()
+
+	# Return the rightmost edge of the character
+	return left + len(pixels[0]) * PIXEL_SIZE
 
 generateFont()
 generateExamples(characters, ligatures, charactersByCodepoint)
