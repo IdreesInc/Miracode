@@ -82,7 +82,6 @@ def generateFont():
 			lig = miracode.createChar(-1, ligature["name"])
 			pen = miracode[ligature["name"]].glyphPen()
 			xOffset = 0
-			print("Lig: ", ligature["name"])
 			for character in chain:
 				if character.get("pixels"):
 					xOffset = drawCharacter(character, lig, pen, xOffset)
