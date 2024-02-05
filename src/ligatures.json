@@ -247,6 +247,53 @@
 		]
 	},
 	{
+		"ligature": "/**",
+		"name": "multiline comment start",
+		"sequence": [47, 42, 42],
+		"chain": [
+			{
+				"reference": 47
+			},
+			{
+				"reference": 42
+			},
+			{
+				"pixels": [
+					[1, 0, 1, 0, 0],
+					[0, 1, 0, 0, 0],
+					[1, 0, 1, 0, 0],
+					[0, 0, 0, 0, 0],
+					[0, 0, 0, 0, 0],
+					[0, 0, 0, 0, 0],
+					[0, 0, 0, 0, 0]
+				],
+				"leftMargin": -0.5
+			}
+		]
+	},
+	{
+		"ligature": "*/",
+		"name": "multiline comment end",
+		"sequence": [42, 47],
+		"chain": [
+			{
+				"reference": 42
+			},
+			{
+				"pixels": [
+					[0, 0, 0, 0, 1],
+					[0, 0, 0, 1, 0],
+					[0, 0, 0, 1, 0],
+					[0, 0, 1, 0, 0],
+					[0, 1, 0, 0, 0],
+					[0, 1, 0, 0, 0],
+					[1, 0, 0, 0, 0]
+				],
+				"leftMargin": -1
+			}
+		]
+	},
+	{
         "ligature": "Miranda",
         "name": "miranda",
         "sequence": [77, 105, 114, 97, 110, 100, 97],

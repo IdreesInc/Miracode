@@ -91,7 +91,7 @@ def generateFont():
 				else:
 					print(f"Unexpected character in ligature {ligature['name']}: {character}")
 				xOffset += PIXEL_SIZE
-			miracode[ligature["name"]].width = round(xOffset - PIXEL_SIZE)
+		miracode[ligature["name"]].width = PIXEL_SIZE * len(ligature["sequence"]) * 6
 		lig.addPosSub("ligatures-subtable", tuple(map(lambda codepoint: charactersByCodepoint[codepoint]["name"], ligature["sequence"])))
 
 	print(f"Generated {len(ligatures)} ligatures")
@@ -266,7 +266,7 @@ def drawHeart(pen, x, y, radius):
 		(-1.6, 0.9),
 		(-0.8, 1.6)
 	]
-	SCALE = 1.2
+	SCALE = 1.3
 	radius *= SCALE
 	pen.moveTo(x + radius * HEART[0][0], y + radius * HEART[0][1])
 	for i in range(1, len(HEART)):
