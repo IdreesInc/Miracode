@@ -1,8 +1,8 @@
-# Monocraft
+# Miracode
 
-[![Github all releases](https://img.shields.io/github/downloads/IdreesInc/Monocraft/total.svg)](https://GitHub.com/IdreesInc/Monocraft/releases/)
-![](https://img.shields.io/github/license/IdreesInc/Monocraft)
-[![](https://img.shields.io/github/v/release/IdreesInc/Monocraft)](https://GitHub.com/IdreesInc/Monocraft/releases/)
+[![Github all releases](https://img.shields.io/github/downloads/IdreesInc/Monocraft/total.svg)](https://GitHub.com/IdreesInc/Miracode/releases/)
+![](https://img.shields.io/github/license/IdreesInc/Miracode)
+[![](https://img.shields.io/github/v/release/IdreesInc/Miracode)](https://GitHub.com/IdreesInc/Miracode/releases/)
 
 ![](images/preview.png)
 

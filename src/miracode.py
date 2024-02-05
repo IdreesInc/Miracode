@@ -115,6 +115,8 @@ def generateEdges(character):
 	edges = []
 
 	drawDiagonals = True
+	if character.get("diagonals") == False:
+		drawDiagonals = False
 
 	numOfCols = len(pixels[0])
 	numOfRows = len(pixels)
