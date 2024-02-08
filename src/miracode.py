@@ -100,6 +100,35 @@ def generateFont():
 	# print("Generating OTF font...")
 	# miracode.generate(outputDir + "Miracode.otf")
 
+def test():
+	print("Testing...")
+	# Get test file
+	tests = json.load(open("./tests.json"))["tests"]
+	passedTests = 0
+	failedTests = 0
+	for test in tests:
+		input = test["input"]
+		output = test["output"]
+		edgesPerPoint = getEdgesPerPoint(generateEdges(input))
+		failed = []
+		for row in range(len(input)):
+			for col in range(len(input[0])):
+				numOfEdges = len(edgesPerPoint.get((col, row), []))
+				if output[row][col] != numOfEdges:
+					failed.append(((row, col), output[row][col], numOfEdges))
+		if len(failed) > 0:
+			print(f"💥 Test failed: {test['name']}")
+			for fail in failed:
+				print(f"   Expected {fail[1]} edge(s) at {fail[0]}, got {fail[2]}")
+			failedTests += 1
+		else:
+			passedTests += 1
+	if failedTests == 0:
+		print("All tests passed!")
+	else:
+		print(f"{failedTests} test(s) failed and {passedTests} tests passed")
+
+
 def get(pixel, row , col):
 	if row < 0 or col < 0:
 		return 0
@@ -107,15 +136,8 @@ def get(pixel, row , col):
 		return 0
 	return pixel[row][col]
 
-def generateEdges(character):
-	if not character.get("pixels"):
-		return
-	pixels = character["pixels"]
+def generateEdges(pixels, drawDiagonals = True):
 	edges = []
-
-	drawDiagonals = True
-	if character.get("diagonals") == False:
-		drawDiagonals = False
 
 	numOfCols = len(pixels[0])
 	numOfRows = len(pixels)
@@ -273,13 +295,7 @@ def drawHeart(pen, x, y, radius):
 		pen.lineTo(x + radius * HEART[i][0], y + radius * HEART[i][1])
 	pen.closePath()
 
-def drawCharacter(character, glyph, pen, xOffset = 0):
-	# print("Drawing character", character["name"])
-	if not character.get("pixels"):
-		# print(f"Character {character['name']} has no pixels")
-		return
-	edges = generateEdges(character)
-
+def getEdgesPerPoint(edges):
 	edgesPerPoint = {}
 	for edge in edges:
 		if edge[0] not in edgesPerPoint:
@@ -288,6 +304,19 @@ def drawCharacter(character, glyph, pen, xOffset = 0):
 		if edge[1] not in edgesPerPoint:
 			edgesPerPoint[edge[1]] = []
 		edgesPerPoint[edge[1]].append(edge)
+	return edgesPerPoint
+
+def drawCharacter(character, glyph, pen, xOffset = 0):
+	# print("Drawing character", character["name"])
+	if not character.get("pixels"):
+		# print(f"Character {character['name']} has no pixels")
+		return
+	drawDiagonals = True
+	if "drawDiagonals" in character:
+		drawDiagonals = character["drawDiagonals"]
+	edges = generateEdges(character["pixels"], drawDiagonals)
+
+	edgesPerPoint = getEdgesPerPoint(edges)
 
 	descent = 0
 	if "descent" in character:
@@ -387,5 +416,8 @@ def drawCharacter(character, glyph, pen, xOffset = 0):
 	# Return the rightmost edge of the character
 	return xOffset + len(pixels[0]) * PIXEL_SIZE
 
-generateFont()
-generateExamples(characters, ligatures, charactersByCodepoint)
+if "--test" in os.sys.argv:
+	test()
+else:
+	generateFont()
+	generateExamples(characters, ligatures, charactersByCodepoint)
