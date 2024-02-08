@@ -102,7 +102,6 @@ def generateFont():
 
 def test():
 	print("Testing...")
-	# Get test file
 	tests = json.load(open("./tests.json"))["tests"]
 	passedTests = 0
 	failedTests = 0
@@ -124,7 +123,7 @@ def test():
 		else:
 			passedTests += 1
 	if failedTests == 0:
-		print("All tests passed!")
+		print("All tests passed! 🎉")
 	else:
 		print(f"{failedTests} test(s) failed and {passedTests} tests passed")
 
@@ -154,9 +153,9 @@ def generateEdges(pixels, drawDiagonals = True):
 						pass
 					elif drawDiagonals and get(pixels, row - 1, col - 1) == 1 and get(pixels, row + 1, col + 1) == 1:
 						# Disallowed
-						#  1 0 1
-						#  0 X 1
-						#  0 0 1
+						# 1 0 1
+						# 0 X 1
+						# 0 0 1
 						pass
 					else:
 						edges.append(((col, row), (col + 1, row)))
