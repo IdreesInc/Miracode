@@ -368,6 +368,12 @@ def ignoreDiagonal(pixels, row , col, flipped):
 			("0", "1", "0"),
 			("0", "0", "0"),
 		),
+		# "e"
+		(
+			("0", "1", "1"),
+			("X", "0", "0"),
+			("1", "1", "1"),
+		),
 	]
 	for pattern in whitelist:
 		pat = pattern
@@ -485,7 +491,7 @@ def drawCharacter(character, glyph, pen, xOffset = 0):
 		leftMargin += character["leftMargin"]
 	left = leftMargin * PIXEL_SIZE + xOffset
 
-	STROKE = 192
+	STROKE = 212
 	HALF = STROKE / 2
 	DOT_RADIUS = HALF * 1.5
 
