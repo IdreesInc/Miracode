@@ -6,7 +6,7 @@
 
 ![](images/miracode-banner.png)
 
-The font for those who like [Monocraft](https://github.com/IdreesInc/Monocraft) but actually want to be able to read what they type!
+The font for those who like [Monocraft](https://github.com/IdreesInc/Monocraft) but want to be able to read what they type!
 
 ## Features
 
