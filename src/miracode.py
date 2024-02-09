@@ -145,23 +145,17 @@ def generateEdges(pixels, drawDiagonals = True):
 			if pixels[row][col] == 1:
 				# Check if there is a pixel to the right
 				if col < numOfCols - 1 and pixels[row][col + 1] == 1:
-					if drawDiagonals and get(pixels, row + 1, col) == 1 and get(pixels, row - 1, col + 2) == 1:
-						# Disallowed (W)
-						# 1 0 1
-						# X 1 0
-						# 1 0 0
-						pass
-					elif drawDiagonals and get(pixels, row - 1, col - 1) == 1 and get(pixels, row + 1, col + 1) == 1:
-						# Disallowed
-						# 1 0 1
-						# 0 X 1
-						# 0 0 1
+					if drawDiagonals and ignoreRight(pixels, row, col):
 						pass
 					else:
 						edges.append(((col, row), (col + 1, row)))
 				# Check if there is a pixel below
 				if row < numOfRows - 1 and pixels[row + 1][col] == 1:
-					edges.append(((col, row), (col, row + 1)))
+					if drawDiagonals and ignoreDown(pixels, row, col):
+						pass
+					else:
+						edges.append(((col, row), (col, row + 1)))
+				# Check diagonals
 				if not drawDiagonals:
 					continue
 				# Check if there is a pixel to the bottom right
@@ -173,6 +167,40 @@ def generateEdges(pixels, drawDiagonals = True):
 					if not ignoreDiagonal(pixels, row, col, True):
 						edges.append(((col, row), (col - 1, row + 1)))
 	return edges
+
+def ignoreRight(pixels, row, col):
+	if get(pixels, row + 1, col) == 1 and get(pixels, row - 1, col + 2) == 1:
+		# Disallowed (W)
+		# 1 0 1
+		# X 1 0
+		# 1 0 0
+		return True
+	elif get(pixels, row - 1, col - 1) == 1 and get(pixels, row + 1, col + 1) == 1:
+		# Disallowed
+		# 1 0 1
+		# 0 X 1
+		# 0 0 1
+		return True
+	return False
+
+def ignoreDown(pixels, row, col):
+	if (get(pixels, row, col - 1) == 1 and get(pixels, row + 1, col - 1) == 0 and get(pixels, row + 2, col + 1) == 1) or (get(pixels, row, col + 1) == 1 and get(pixels, row + 1, col + 1) == 0 and get(pixels, row + 2, col - 1) == 1):
+		# Disallowed (z top)
+		# 1 X 1
+		# 0 1 0
+		# 1 0 0
+		return True
+	elif get(pixels, row - 1, col) != 1 and (get(pixels, row - 1, col - 2) != 1 and get(pixels, row - 1, col - 1) == 1 and get(pixels, row, col - 1) == 0 and get(pixels, row + 1, col + 1) == 1) or (get(pixels, row - 1, col + 2) != 1 and get(pixels, row - 1, col + 1) == 1 and get(pixels, row, col + 1) == 0 and get(pixels, row + 1, col - 1) == 1):
+		# Disallowed (z bottom)
+		# 0 0 1
+		# 0 X 0
+		# 1 1 1
+		# Allowed (f)
+		# 0 0 1 1
+		# 0 X 0 0
+		# 1 1 1 0
+		return True
+	return False
 
 def ignoreDiagonal(pixels, row , col, flipped):
 	colMod = -1 if flipped else 1
@@ -420,3 +448,4 @@ if "--test" in os.sys.argv:
 else:
 	generateFont()
 	generateExamples(characters, ligatures, charactersByCodepoint)
+	test()
