@@ -70,6 +70,7 @@ def generateFont():
 	# miracode.generate(outputDir + "Miracode-no-ligatures.ttf")
 
 	for ligature in ligatures:
+		lig = None
 		if ligature.get("pixels"):
 			# Basic ligature
 			lig = miracode.createChar(-1, ligature["name"])
@@ -91,6 +92,9 @@ def generateFont():
 				else:
 					print(f"Unexpected character in ligature {ligature['name']}: {character}")
 				xOffset += PIXEL_SIZE
+		else:
+			print(f"Unexpected ligature type: {ligature}")
+			continue
 		miracode[ligature["name"]].width = PIXEL_SIZE * len(ligature["sequence"]) * 6
 		lig.addPosSub("ligatures-subtable", tuple(map(lambda codepoint: charactersByCodepoint[codepoint]["name"], ligature["sequence"])))
 
@@ -121,6 +125,7 @@ def test():
 				print(f"   Expected {fail[1]} edge(s) at {fail[0]}, got {fail[2]}")
 			failedTests += 1
 		else:
+			# print (f"✅ Test passed: {test['name']}")
 			passedTests += 1
 	if failedTests == 0:
 		print("All tests passed! 🎉")
@@ -134,6 +139,37 @@ def get(pixel, row , col):
 	if row >= len(pixel) or col >= len(pixel[0]):
 		return 0
 	return pixel[row][col]
+
+def compare(expected, actual):
+	if expected == "~":
+		return True
+	elif expected == "1":
+		return actual == 1
+	elif expected == "0":
+		return actual == 0
+	return False
+
+def matchPattern(pixels, row, col, pattern):
+	cursorRow = None
+	cursorCol = None
+	for i in range(len(pattern)):
+		for j in range(len(pattern[0])):
+			if pattern[i][j] == "X":
+				cursorRow = i
+				cursorCol = j
+				break
+		if cursorRow != None:
+			break
+	if cursorRow == None or cursorCol == None:
+		raise ValueError("Pattern must contain a cursor (X)")
+	
+	for i in range(len(pattern)):
+		for j in range(len(pattern[0])):
+			if i == cursorRow and j == cursorCol:
+				continue
+			if not compare(pattern[i][j], get(pixels, row + i - cursorRow, col + j - cursorCol)):
+				return False
+	return True
 
 def generateEdges(pixels, drawDiagonals = True):
 	edges = []
@@ -169,88 +205,169 @@ def generateEdges(pixels, drawDiagonals = True):
 	return edges
 
 def ignoreRight(pixels, row, col):
-	if get(pixels, row + 1, col) == 1 and get(pixels, row - 1, col + 2) == 1:
-		# Disallowed (W)
-		# 1 0 1
-		# X 1 0
-		# 1 0 0
-		return True
-	elif get(pixels, row - 1, col - 1) == 1 and get(pixels, row + 1, col + 1) == 1:
-		# Disallowed
-		# 1 0 1
-		# 0 X 1
-		# 0 0 1
-		return True
+	ignorePatterns = [
+		# "W" left
+		(
+			("1", "0", "1"),
+			("X", "1", "0"),
+			("1", "0", "~"),
+		),
+		# "W" right
+		(
+			("1", "0", "1"),
+			("0", "X", "1"),
+			("0", "0", "1"),
+		),
+		# "0"
+		(
+			("0", "0", "1"),
+			("0", "X", "1"),
+			("1", "0", "1"),
+		),
+		# "M"
+		(
+			("1", "0", "0"),
+			("X", "1", "0"),
+			("1", "0", "1"),
+		),
+		# "1"
+		(
+			("0", "0", "0"),
+			("0", "1", "0"),
+			("X", "1", "0"),
+			("0", "1", "0"),
+			("0", "1", "0"),
+		),
+	]
+	for pattern in ignorePatterns:
+		if matchPattern(pixels, row, col, pattern):
+			return True
 	return False
 
 def ignoreDown(pixels, row, col):
-	if (get(pixels, row, col - 1) == 1 and get(pixels, row + 1, col - 1) == 0 and get(pixels, row + 2, col + 1) == 1) or (get(pixels, row, col + 1) == 1 and get(pixels, row + 1, col + 1) == 0 and get(pixels, row + 2, col - 1) == 1):
-		# Disallowed (z top)
-		# 1 X 1
-		# 0 1 0
-		# 1 0 0
-		return True
-	elif get(pixels, row - 1, col) != 1 and (get(pixels, row - 1, col - 2) != 1 and get(pixels, row - 1, col - 1) == 1 and get(pixels, row, col - 1) == 0 and get(pixels, row + 1, col + 1) == 1) or (get(pixels, row - 1, col + 2) != 1 and get(pixels, row - 1, col + 1) == 1 and get(pixels, row, col + 1) == 0 and get(pixels, row + 1, col - 1) == 1):
-		# Disallowed (z bottom)
-		# 0 0 1
-		# 0 X 0
-		# 1 1 1
-		# Allowed (f)
-		# 0 0 1 1
-		# 0 X 0 0
-		# 1 1 1 0
-		return True
+	ignorePatterns = [
+		# "z" top
+		(
+			("1", "X", "1"),
+			("0", "1", "0"),
+			("1", "0", "0"),
+		),
+		# "z" bottom
+		(
+			("0", "0", "1", "0"),
+			("0", "X", "0", "0"),
+			("1", "1", "1", "~"),
+		)
+	]
+	for pattern in ignorePatterns:
+		if matchPattern(pixels, row, col, pattern):
+			return True
 	return False
 
+def flipPattern(pattern):
+	return list(map(lambda row: list(reversed(row)), pattern))
+
 def ignoreDiagonal(pixels, row , col, flipped):
-	colMod = -1 if flipped else 1
-	if get(pixels, row + 1, col) == 1 and (get(pixels, row - 1, col - colMod) != 1 or get(pixels, row + 2, col) == 1) and (get(pixels, row + 2, col + 2 * colMod) != 1 or get(pixels, row, col + 2 * colMod) == 1):
-		# Disallowed (H)
-		# X 0 0 
-		# 1 1 1
-		# 1 0 0
-		# Disallowed (f)
-		# 1 0 0 
-		# 0 X 0
-		# 1 1 1
-		# 0 1 0
-		# Disallowed (k)
-		# X 0 1
-		# 1 1 0
-		# 1 0 1
-		# Allowed (z)
-		# 1 0 0
-		# 0 X 0
-		# 1 1 1
-		# Allowed (M)
-		# X 0 0
-		# 1 1 0
-		# 1 0 1
-		return True
-	elif get(pixels, row, col + colMod) == 1 and get(pixels, row + 2, col + colMod) == 1 and get(pixels, row - 1, col) != 0:
-		# Disallowed (l)
-		# 0 X 1
-		# 0 0 1
-		# 0 0 1
-		# Allowed (W)
-		# 1 0 1
-		# 0 X 1
-		# 0 0 1
-		return True
-	elif get(pixels, row - 1, col - colMod) != 1 and get(pixels, row + 2, col + 2 * colMod) != 1 and get(pixels, row, col + colMod) == 1:
-		# Disallowed (H)
-		# 0 0 1
-		# 1 X 1
-		# 0 0 1
-		# Allowed (W)
-		# 1 0 1
-		# 0 X 1
-		# 0 0 1
-		# Allowed (z)
-		# X 1 1
-		# 0 1 0
-		# 0 0 1
-		return True
+	whitelist = [
+		# "z"
+		(
+			("X", "1", "1"),
+			("0", "1", "0"),
+			("0", "0", "1"),
+		),
+	]
+	blacklist = [
+		(
+			("0", "0", "0"),
+			("X", "1", "0"),
+			("0", "1", "0"),
+		),
+		# "H" left
+		(
+			("X", "0", "0"),
+			("1", "1", "1"),
+			("1", "0", "0"),
+		),
+		# "H" right
+		(
+			("0", "0", "1"),
+			("1", "X", "1"),
+			("0", "0", "1"),
+		),
+		# "f"
+		(
+			("0", "X", "0"),
+			("1", "1", "1"),
+			("0", "1", "0"),
+		),
+		# "z" top
+		(
+			("X", "1", "1"),
+			("0", "1", "0"),
+			("1", "0", "0"),
+		),
+		# "z" bottom
+		(
+			("0", "0", "1"),
+			("0", "X", "0"),
+			("1", "1", "1"),
+		),
+		# "k" and "h"
+		(
+			("X", "0", "1"),
+			("1", "1", "~"),
+			("1", "~", "~"),
+		),
+		# "l"
+		(
+			("0", "0", "0"),
+			("0", "X", "1"),
+			("0", "0", "1"),
+			("0", "0", "1"),
+		),
+		# "u" and "w"
+		(
+			("0", "1", "0"),
+			("0", "X", "0"),
+			("~", "1", "1"),
+		),
+		# "0"
+		(
+			("0", "0", "1"),
+			("~", "X", "1"),
+			("~", "0", "1"),
+		),
+		# "F", "E", "P", etc.
+		(
+			("1", "X", "1"),
+			("0", "0", "1"),
+			("~", "~", "1"),
+		),
+		# "5"
+		(
+			("1", "1"),
+			("X", "0"),
+			("1", "1"),
+		),
+		# "Z"
+		(
+			("0", "0", "1", "0"),
+			("0", "X", "0", "0"),
+			("0", "1", "1", "1"),
+		),
+	]
+	for pattern in whitelist:
+		pat = pattern
+		if flipped:
+			pat = flipPattern(pattern)
+		if matchPattern(pixels, row, col, pat):
+			return False
+	for pattern in blacklist:
+		pat = pattern
+		if flipped:
+			pat = flipPattern(pattern)
+		if matchPattern(pixels, row, col, pat):
+			return True
 	return False
 
 def countNeighbors(pixels, row, col):
@@ -337,7 +454,7 @@ def drawCharacter(character, glyph, pen, xOffset = 0):
 	# print("Drawing character", character["name"])
 	if not character.get("pixels"):
 		# print(f"Character {character['name']} has no pixels")
-		return
+		return xOffset
 	drawDiagonals = True
 	if "drawDiagonals" in character:
 		drawDiagonals = character["drawDiagonals"]
