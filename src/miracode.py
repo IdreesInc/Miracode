@@ -491,7 +491,7 @@ def drawCharacter(character, glyph, pen, xOffset = 0):
 		leftMargin += character["leftMargin"]
 	left = leftMargin * PIXEL_SIZE + xOffset
 
-	STROKE = 212
+	STROKE = 200
 	HALF = STROKE / 2
 	DOT_RADIUS = HALF * 1.5
 
