@@ -374,6 +374,13 @@ def ignoreDiagonal(pixels, row , col, flipped):
 			("X", "0", "0"),
 			("1", "1", "1"),
 		),
+		# "2"
+		(
+			("0", "0", "0"),
+			("0", "X", "0"),
+			("0", "1", "1"),
+			("0", "0", "0"),
+		),
 	]
 	for pattern in whitelist:
 		pat = pattern
