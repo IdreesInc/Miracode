@@ -1549,7 +1549,8 @@
 			[1, 0, 1, 0, 1, 1],
 			[1, 0, 0, 0, 0, 1],
 			[0, 1, 1, 1, 1, 0]
-		]
+		],
+		"diagonals": false
 	},
 	{
 		"character": "macron",
@@ -3825,7 +3826,8 @@
 			[1, 0, 1, 1, 0, 1],
 			[1, 1, 0, 0, 1, 1],
 			[0, 1, 1, 1, 1, 0]
-		]
+		],
+		"diagonals": false
 	},
 	{
 		"character": "♥",
@@ -10260,7 +10262,8 @@
 			[1, 1, 1, 1, 1, 1, 1]
 		],
 		"group": "miscellaneous_symbols",
-		"character": "⚀"
+		"character": "⚀",
+		"diagonals": false
 	},
 	{
 		"codepoint": 9857,
@@ -10275,7 +10278,8 @@
 			[1, 1, 1, 1, 1, 1, 1]
 		],
 		"group": "miscellaneous_symbols",
-		"character": "⚁"
+		"character": "⚁",
+		"diagonals": false
 	},
 	{
 		"codepoint": 9858,
@@ -10290,7 +10294,8 @@
 			[1, 1, 1, 1, 1, 1, 1]
 		],
 		"group": "miscellaneous_symbols",
-		"character": "⚂"
+		"character": "⚂",
+		"diagonals": false
 	},
 	{
 		"codepoint": 9859,
@@ -10305,7 +10310,8 @@
 			[1, 1, 1, 1, 1, 1, 1]
 		],
 		"group": "miscellaneous_symbols",
-		"character": "⚃"
+		"character": "⚃",
+		"diagonals": false
 	},
 	{
 		"codepoint": 9860,
@@ -10320,7 +10326,8 @@
 			[1, 1, 1, 1, 1, 1, 1]
 		],
 		"group": "miscellaneous_symbols",
-		"character": "⚄"
+		"character": "⚄",
+		"diagonals": false
 	},
 	{
 		"codepoint": 9861,
@@ -10335,7 +10342,8 @@
 			[1, 1, 1, 1, 1, 1, 1]
 		],
 		"group": "miscellaneous_symbols",
-		"character": "⚅"
+		"character": "⚅",
+		"diagonals": false
 	},
 	{
 		"codepoint": 9889,
@@ -10431,7 +10439,8 @@
 			[0, 1, 1, 1, 1, 1, 0]
 		],
 		"group": "miscellaneous_symbols",
-		"character": "☻"
+		"character": "☻",
+		"diagonals": false
 	},
 	{
 		"codepoint": 9785,
@@ -14438,7 +14447,8 @@
 		],
 		"group": "specials",
 		"character": "�",
-		"descent": 1
+		"descent": 1,
+		"diagonals": false
 	},
 	{
 		"codepoint": 5794,

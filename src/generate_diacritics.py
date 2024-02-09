@@ -14,11 +14,13 @@
 def generateDiacritics(characters, diacritics):
     # Create dictionaries for faster lookup
     charactersByName = {}
+    charactersByCodepoint = {}
     diacriticsByCodepoint = {}
     for c in characters:
         charactersByName[c["name"]] = c["codepoint"]
+        charactersByCodepoint[c["codepoint"]] = c
     for d in diacritics:
-        diacriticsByCodepoint[d] = 0
+        diacriticsByCodepoint[d] = diacritics[d]
 
     # List to store generated dictionary
     charList = []
@@ -37,14 +39,44 @@ def generateDiacritics(characters, diacritics):
         if not diacritic in diacriticsByCodepoint or not name in charactersByName or newName in charactersByName:
             continue
         codepoint = int(line.split(";")[0].strip(), 16)
+        baseChar = charactersByCodepoint[charactersByName[name]]
         # Store in a dictionary for serialization
         char = {}
         char["character"] = chr(codepoint)
         char["name"] = name + "_with_" + diacritic
         char["codepoint"] = codepoint
-        char["reference"] = charactersByName[name]
-        char["diacritic"] = diacritic
-        char["diacriticSpace"] = 1
+        # char["reference"] = charactersByName[name]
+        # char["diacritic"] = diacritic
+        # char["diacriticSpace"] = 1
+        pixels = []
+        if "pixels" in baseChar:
+            pixels = baseChar["pixels"].copy()
+            top = determineTop(pixels)
+            # Trim whitespace from the top
+            if top > 0:
+                for i in range(top):
+                    pixels.pop(0)
+            # Add a space for the diacritic
+            pixels.insert(0, [0] * len(pixels[0]))
+            # Add the diacritic to the base character
+            diacriticPixels = diacriticsByCodepoint[diacritic]["pixels"]
+            lengthDiff = len(pixels[0]) - len(diacriticPixels[0])
+            if lengthDiff < 0:
+                print("Diacritic " + diacritic + " is wider than " + name + ", skipping")
+                continue
+            else:
+                # Add the diacritic to the base character
+                prefix = []
+                for row in diacriticPixels:
+                    newRow = row.copy()
+                    # Add padding to the right
+                    for i in range(lengthDiff):
+                        newRow.append(0)
+                    prefix.append(newRow)
+                pixels = prefix + pixels
+        else:
+            continue
+        char["pixels"] = pixels
         charList.append(char)
 
     for c in charList:
@@ -52,3 +84,14 @@ def generateDiacritics(characters, diacritics):
 
     print("Added " + str(len(charList)) + " diacritic combinations")
     return characters
+
+
+def determineTop(pixels):
+    # Determine the top of the character
+    top = 0
+    for row in pixels:
+        for col in row:
+            if col == 1:
+                return top
+        top += 1
+    return top

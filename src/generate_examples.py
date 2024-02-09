@@ -12,7 +12,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 def generateExamples(characters, ligatures, charactersByCodepoint):
-	terminalOutput = 26*"-" + " Monocraft " + 26*"-"
+	terminalOutput = 26*"-" + " Miracode " + 26*"-"
 	index = 0
 	for character in characters:
 		if character["codepoint"] == 32:
@@ -24,7 +24,7 @@ def generateExamples(characters, ligatures, charactersByCodepoint):
 
 	print(terminalOutput)
 
-	characterOutput = "--- Monocraft ---\n\n"
+	characterOutput = "--- Miracode ---\n\n"
 	for i in range(65, 91):
 		characterOutput += chr(i) + " "
 	characterOutput += "\n"
@@ -48,16 +48,16 @@ def generateExamples(characters, ligatures, charactersByCodepoint):
 			index = 0
 			characterOutput += "\n"
 		if i in charactersByCodepoint:
-			if index % 48 == 0:
+			if index % 60 == 0:
 				characterOutput += "\n"
 			characterOutput += chr(i) + " "
 			index += 1
 
-	ligatureOutput = "--- Ligatures ---"
+	ligatureOutput = "----- Ligatures -----"
 	for ligature in ligatures:
 		start = ''.join(map(lambda codepoint: ' ' + chr(codepoint), ligature['sequence']))
-		start += (7 - len(ligature['sequence'])) * " "
-		output = 5 * " " + ''.join(map(lambda codepoint: chr(codepoint), ligature['sequence']))
+		start += (10 - len(ligature['sequence'])) * " "
+		output = 8 * " " + ''.join(map(lambda codepoint: chr(codepoint), ligature['sequence']))
 		ligatureOutput += "\n" + start + "->" + output
 
 	f = open("../examples/glyphs.txt", "w")

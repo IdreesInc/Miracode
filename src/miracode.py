@@ -54,10 +54,11 @@ def generateFont():
 	for character in characters:
 		miracode.createChar(character["codepoint"], character["name"])
 		pen = miracode[character["name"]].glyphPen()
-		top = 0
-		drawn = character
-
-		drawCharacter(character, miracode[character["name"]], pen)
+		if character.get("reference"):
+			referencedCharacter = charactersByCodepoint[character["reference"]]
+			drawCharacter(referencedCharacter, miracode[character["name"]], pen)
+		else:
+			drawCharacter(character, miracode[character["name"]], pen)
 
 		miracode[character["name"]].width = PIXEL_SIZE * 6
 	print(f"Generated {len(characters)} characters")
@@ -258,7 +259,23 @@ def ignoreDown(pixels, row, col):
 			("0", "0", "1", "0"),
 			("0", "X", "0", "0"),
 			("1", "1", "1", "~"),
-		)
+		),
+		# "→", "->"
+		(
+			("1", "0", "0"),
+			("0", "X", "0"),
+			("1", "1", "1"),
+			("0", "1", "0"),
+			("1", "0", "0"),
+		),
+		# "←"
+		(
+			("0", "0", "1"),
+			("0", "X", "0"),
+			("1", "1", "1"),
+			("0", "1", "0"),
+			("0", "0", "1"),
+		),
 	]
 	for pattern in ignorePatterns:
 		if matchPattern(pixels, row, col, pattern):
@@ -275,6 +292,26 @@ def ignoreDiagonal(pixels, row , col, flipped):
 			("X", "1", "1"),
 			("0", "1", "0"),
 			("0", "0", "1"),
+		),
+		# "↑"
+		(
+			("0", "0", "X", "0", "0"),
+			("0", "1", "1", "1", "0"),
+			("1", "0", "1", "0", "1"),
+		),
+		# "→", "->"
+		(
+			("1", "0", "0"),
+			("0", "X", "0"),
+			("1", "1", "1"),
+			("0", "1", "0"),
+			("1", "0", "0"),
+		),
+		# "↓"
+		(
+			("1", "0", "1", "0", "1"),
+			("0", "X", "1", "1", "0"),
+			("0", "0", "1", "0", "0"),
 		),
 	]
 	blacklist = [
@@ -482,8 +519,8 @@ def drawCharacter(character, glyph, pen, xOffset = 0):
 		# print(f"Character {character['name']} has no pixels")
 		return xOffset
 	drawDiagonals = True
-	if "drawDiagonals" in character:
-		drawDiagonals = character["drawDiagonals"]
+	if "diagonals" in character:
+		drawDiagonals = character["diagonals"]
 	edges = generateEdges(character["pixels"], drawDiagonals)
 
 	edgesPerPoint = getEdgesPerPoint(edges)
@@ -498,7 +535,7 @@ def drawCharacter(character, glyph, pen, xOffset = 0):
 		leftMargin += character["leftMargin"]
 	left = leftMargin * PIXEL_SIZE + xOffset
 
-	STROKE = 200
+	STROKE = 192
 	HALF = STROKE / 2
 	DOT_RADIUS = HALF * 1.5
 
