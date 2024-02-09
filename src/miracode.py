@@ -32,6 +32,8 @@ ligatures = json.load(open("./ligatures.json"))
 
 characters = generateDiacritics(characters, diacritics)
 charactersByCodepoint = {}
+for character in characters:
+	charactersByCodepoint[character["codepoint"]] = character
 
 def generateFont():
 	miracode = fontforge.font()
@@ -50,7 +52,6 @@ def generateFont():
 	miracode.addLookupSubtable("ligatures", "ligatures-subtable")
 
 	for character in characters:
-		charactersByCodepoint[character["codepoint"]] = character
 		miracode.createChar(character["codepoint"], character["name"])
 		pen = miracode[character["name"]].glyphPen()
 		top = 0
@@ -110,7 +111,7 @@ def test():
 	passedTests = 0
 	failedTests = 0
 	for test in tests:
-		input = test["input"]
+		input = charactersByCodepoint[test["codepoint"]]["pixels"]
 		output = test["output"]
 		edgesPerPoint = getEdgesPerPoint(generateEdges(input))
 		failed = []
@@ -120,12 +121,12 @@ def test():
 				if output[row][col] != numOfEdges:
 					failed.append(((row, col), output[row][col], numOfEdges))
 		if len(failed) > 0:
-			print(f"💥 Test failed: {test['name']}")
+			print(f"💥 Test failed: {test['character']}")
 			for fail in failed:
 				print(f"   Expected {fail[1]} edge(s) at {fail[0]}, got {fail[2]}")
 			failedTests += 1
 		else:
-			# print (f"✅ Test passed: {test['name']}")
+			# print (f"✅ Test passed: {test['character']}")
 			passedTests += 1
 	if failedTests == 0:
 		print("All tests passed! 🎉")
