@@ -8,6 +8,8 @@
 
 The font for those who like [Monocraft](https://github.com/IdreesInc/Monocraft) but want to be able to read what they type!
 
+![](images/preview.png)
+
 ## Features
 
 - Like Monocraft, but readable!
