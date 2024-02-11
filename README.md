@@ -10,6 +10,8 @@ The font for those who like [Monocraft](https://github.com/IdreesInc/Monocraft) 
 
 ![](images/preview.png)
 
+[Follow me](https://github.com/IdreesInc/IdreesInc) for updates on this and other projects!
+
 ## Features
 
 - Like Monocraft, but readable!
