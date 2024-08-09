@@ -4,6 +4,9 @@
 ![](https://img.shields.io/github/license/IdreesInc/Miracode)
 [![](https://img.shields.io/github/v/release/IdreesInc/Miracode)](https://GitHub.com/IdreesInc/Miracode/releases/)
 
+## [`Download it here!`](https://github.com/IdreesInc/Miracode/releases)
+<br/>
+
 ![](images/miracode-banner.png)
 
 The font for those who like [Monocraft](https://github.com/IdreesInc/Monocraft) but want to be able to read what they type!
