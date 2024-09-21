@@ -40,14 +40,13 @@ Download the most recent `Miracode.ttf` file from the [Releases](https://github.
 
 ### Mac
 
-<!-- #### Using Homebrew
+#### Using Homebrew
 
 ```shell
-brew tap homebrew/cask-fonts
-brew install --cask font-monocraft
-``` -->
+brew install --cask font-miracode
+```
 
-<!-- #### Manually -->
+#### Manually
 
 Download the most recent `Miracode.ttf` file from the [Releases](https://github.com/IdreesInc/Miracode/releases) page. Double click on the downloaded font file and select **Install Font** in the window that appears. More help available [here](https://support.apple.com/en-us/HT201749).
 
