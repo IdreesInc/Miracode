@@ -1,0 +1,94 @@
+[tool.poetry]
+name = "miracode"
+version = "1.0.0"
+description = "A programming font designed for clarity and readability"
+authors = ["Idrees Hassan <idrees@idreesinc.com>"]
+license = "GPL-3.0-or-later"
+readme = "README.md"
+repository = "https://github.com/IdreesInc/Miracode"
+keywords = ["font", "programming", "monospace", "ligatures"]
+packages = [{include = "src"}]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+# Note: fontforge must be installed separately via system package manager
+# e.g., apt-get install python3-fontforge or brew install fontforge
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.4.0"
+pytest-cov = "^4.1.0"
+pytest-mock = "^3.11.1"
+
+[tool.poetry.scripts]
+test = "pytest:main"
+tests = "pytest:main"
+
+[tool.pytest.ini_options]
+minversion = "7.0"
+testpaths = ["tests"]
+python_files = ["test_*.py", "*_test.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = [
+    "--strict-markers",
+    "--strict-config",
+    "--verbose",
+    "--cov=src",
+    "--cov-branch",
+    "--cov-report=term-missing:skip-covered",
+    "--cov-report=html:htmlcov",
+    "--cov-report=xml:coverage.xml",
+    # Coverage threshold disabled for initial setup
+    # Uncomment the following line when actual tests are written:
+    # "--cov-fail-under=80",
+]
+markers = [
+    "unit: Unit tests",
+    "integration: Integration tests",
+    "slow: Tests that take a long time to run",
+]
+filterwarnings = [
+    "error",
+    "ignore::UserWarning",
+    "ignore::DeprecationWarning",
+]
+
+[tool.coverage.run]
+source = ["src"]
+branch = true
+parallel = true
+omit = [
+    "*/tests/*",
+    "*/__pycache__/*",
+    "*/venv/*",
+    "*/.venv/*",
+]
+
+[tool.coverage.report]
+precision = 2
+show_missing = true
+skip_covered = false
+fail_under = 80
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "if self.debug:",
+    "if settings.DEBUG",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if 0:",
+    "if __name__ == .__main__.:",
+    "if TYPE_CHECKING:",
+    "class .*\\bProtocol\\):",
+    "@(abc\\.)?abstractmethod",
+]
+
+[tool.coverage.html]
+directory = "htmlcov"
+
+[tool.coverage.xml]
+output = "coverage.xml"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
