@@ -3,6 +3,9 @@
 [![Github all releases](https://img.shields.io/github/downloads/IdreesInc/Miracode/total.svg)](https://GitHub.com/IdreesInc/Miracode/releases/)
 ![](https://img.shields.io/github/license/IdreesInc/Miracode)
 [![](https://img.shields.io/github/v/release/IdreesInc/Miracode)](https://GitHub.com/IdreesInc/Miracode/releases/)
+<a href="https://discord.gg/6yxE9prcNc" target="_blank">
+	<img alt="Discord" src="https://img.shields.io/discord/1398471368403583120?logo=discord&logoColor=fff&label=discord&color=5865F2">
+</a>
 
 ## [`Download it here!`](https://github.com/IdreesInc/Miracode/releases)
 <br/>
