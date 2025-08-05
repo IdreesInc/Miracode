@@ -18,6 +18,8 @@ The font for those who like [Monocraft](https://github.com/IdreesInc/Monocraft) 
 
 [Follow me](https://github.com/IdreesInc/IdreesInc) for updates on this and other projects!
 
+### [For updates and support, visit our Discord!](https://discord.gg/6yxE9prcNc)
+
 ## Features
 
 - Like Monocraft, but readable!
