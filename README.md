@@ -31,7 +31,6 @@ The font for those who like [Monocraft](https://github.com/IdreesInc/Monocraft) 
 - Programming ligatures!
   - Add some spice to your programming life with all new ligature characters
   - Arrows now look like arrows and comparison operators are easier to see at a glance
-  - Plus, Miracode includes some ligatures that are not available in Monocraft such as a ligature for "TODO:" and "NOTE:"
 
 ## Glyphs
 
