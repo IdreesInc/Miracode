@@ -25,9 +25,9 @@ from generate_continuous_ligatures import generate_continuous_ligatures
 PIXEL_SIZE = 256
 SQRT_TWO = math.sqrt(2)
 
-characters = json.load(open("./characters.json"))
-diacritics = json.load(open("./diacritics.json"))
-ligatures = json.load(open("./ligatures.json"))
+characters = json.load(open("./characters.json", encoding="utf-8"))
+diacritics = json.load(open("./diacritics.json", encoding="utf-8"))
+ligatures = json.load(open("./ligatures.json", encoding="utf-8"))
 # ligatures += generate_continuous_ligatures("./continuous_ligatures.json")
 
 characters = generateDiacritics(characters, diacritics)
