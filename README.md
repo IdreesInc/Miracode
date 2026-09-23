@@ -24,7 +24,7 @@ The font for those who like [Monocraft](https://github.com/IdreesInc/Monocraft) 
 
 - Like Monocraft, but readable!
   - The characters in this font are based on [Monocraft](https://github.com/IdreesInc/Monocraft) which is based on the typeface used in the Minecraft UI
-  - Each of the 1500+ glyphs included in this font have been carefully redesigned to work in a monospaced font
+  - Each of the 1400+ glyphs included in this font have been carefully redesigned to work in a monospaced font
   - Thin characters like "i" and "l" have been reworked with tasteful tails and serifs to look better in a monospaced environment
 - Angular!
   - Miracode uses a special algorithm to convert the pixels that make up each character into a series of lines and curves. This gives each character a unique, angular look that is sure to make your code stand out
@@ -72,7 +72,7 @@ After following the installation instructions up above, simply select the "Mirac
 
 ### How are these characters generated?
 
-Using [FontForge's](https://fontforge.org/en-US/) excellent Python extension, the glyphs are created from configuration files representing each character's pixels. Diacritics are created separately and are combined with the original characters to create over 1500 unique glyphs. To learn more, check out the source code in the [src](https://github.com/IdreesInc/Miracode/tree/main/src) folder.
+Using [FontForge's](https://fontforge.org/en-US/) excellent Python extension, the glyphs are created from configuration files representing each character's pixels. Diacritics are created separately and are combined with the original characters to create over 1400 unique glyphs. To learn more, check out the source code in the [src](https://github.com/IdreesInc/Miracode/tree/main/src) folder.
 
 ### How do I contribute?
 
