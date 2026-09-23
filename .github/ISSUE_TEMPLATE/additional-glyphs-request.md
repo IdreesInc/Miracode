@@ -2,7 +2,7 @@
 name: Additional Glyphs Request
 about: Suggest some characters/glyphs/ligatures to be added to Monocraft
 title: ''
-labels: additional-glyphs
+labels: enhancement
 assignees: ''
 
 ---
