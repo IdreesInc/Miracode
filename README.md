@@ -66,6 +66,17 @@ After following the installation instructions up above, simply select the "Mirac
 
 ## FAQ
 
+### Building from source
+
+Use Python 3 with the FontForge Python bindings installed. Install the pinned
+packages in `requirements-build.txt` into that same Python environment, then
+run `python miracode.py` from `src/`. The generated font is written to
+`dist/Miracode.ttf`.
+
+From the repository root, run `python tests/check_font.py dist/Miracode.ttf`
+to check accented references, vertical metrics, and monospace metadata.
+
+
 ### What ligatures are available?
 
 <img src="images/ligatures.png" width="300">

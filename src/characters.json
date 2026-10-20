@@ -3876,6 +3876,7 @@
 	{
 		"codepoint": 8212,
 		"name": "em_dash",
+		"sideBearing": 0.5,
 		"pixels": [
 			[0, 0, 0, 0, 0, 0, 0, 0],
 			[0, 0, 0, 0, 0, 0, 0, 0],

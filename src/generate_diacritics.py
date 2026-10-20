@@ -22,6 +22,29 @@ def generateDiacritics(characters, diacritics):
     for d in diacritics:
         diacriticsByCodepoint[d] = diacritics[d]
 
+    # Explicit accented references are skipped by the Unicode-name generator.
+    # Resolve their base first so the renderer receives the accent as pixels,
+    # rather than drawing only the referenced unaccented character.
+    for char in characters:
+        if not (char.get("reference") and char.get("diacritic")):
+            continue
+        base = charactersByCodepoint[char["reference"]]
+        visited = {char["codepoint"]}
+        while base.get("reference"):
+            if base["codepoint"] in visited:
+                raise ValueError("Circular character reference: " + char["name"])
+            visited.add(base["codepoint"])
+            base = charactersByCodepoint[base["reference"]]
+        pixels = composeDiacritic(base, diacriticsByCodepoint[char["diacritic"]],
+                                  char.get("diacriticSpace", 1))
+        if pixels is None:
+            raise ValueError("Cannot compose diacritic for " + char["name"])
+        for key in ("descent", "leftMargin", "diagonals"):
+            if key in base and key not in char:
+                char[key] = base[key]
+        char["pixels"] = pixels
+        del char["reference"]
+
     # List to store generated dictionary
     charList = []
 
@@ -48,33 +71,8 @@ def generateDiacritics(characters, diacritics):
         # char["reference"] = charactersByName[name]
         # char["diacritic"] = diacritic
         # char["diacriticSpace"] = 1
-        pixels = []
-        if "pixels" in baseChar:
-            pixels = baseChar["pixels"].copy()
-            top = determineTop(pixels)
-            # Trim whitespace from the top
-            if top > 0:
-                for i in range(top):
-                    pixels.pop(0)
-            # Add a space for the diacritic
-            pixels.insert(0, [0] * len(pixels[0]))
-            # Add the diacritic to the base character
-            diacriticPixels = diacriticsByCodepoint[diacritic]["pixels"]
-            lengthDiff = len(pixels[0]) - len(diacriticPixels[0])
-            if lengthDiff < 0:
-                print("Diacritic " + diacritic + " is wider than " + name + ", skipping")
-                continue
-            else:
-                # Add the diacritic to the base character
-                prefix = []
-                for row in diacriticPixels:
-                    newRow = row.copy()
-                    # Add padding to the right
-                    for i in range(lengthDiff):
-                        newRow.append(0)
-                    prefix.append(newRow)
-                pixels = prefix + pixels
-        else:
+        pixels = composeDiacritic(baseChar, diacriticsByCodepoint[diacritic])
+        if pixels is None:
             continue
         char["pixels"] = pixels
         charList.append(char)
@@ -84,6 +82,19 @@ def generateDiacritics(characters, diacritics):
 
     print("Added " + str(len(charList)) + " diacritic combinations")
     return characters
+
+
+def composeDiacritic(base, diacritic, space=1):
+    if not base.get("pixels"):
+        return None
+    pixels = [row.copy() for row in base["pixels"]]
+    pixels = pixels[determineTop(pixels):]
+    width = len(pixels[0])
+    accent = diacritic["pixels"]
+    if len(accent[0]) > width:
+        return None
+    prefix = [row.copy() + [0] * (width - len(row)) for row in accent]
+    return prefix + [[0] * width for _ in range(space)] + pixels
 
 
 def determineTop(pixels):
