@@ -17,13 +17,21 @@ import os
 import fontforge
 import json
 import math
+import argparse
 from generate_diacritics import generateDiacritics
 from generate_examples import generateExamples
 from polygonizer import PixelImage, generatePolygons
 from generate_continuous_ligatures import generate_continuous_ligatures 
+from font_metadata import finalizeFont
+from accent_shapes import drawSwedishAccent
 
 PIXEL_SIZE = 256
 SQRT_TWO = math.sqrt(2)
+parser = argparse.ArgumentParser(description="Generate Miracode from its pixel source")
+parser.add_argument("--style", choices=("Regular", "Bold"), default="Regular")
+parser.add_argument("--test", action="store_true")
+args = parser.parse_args()
+STROKE = 312 if args.style == "Bold" else 192
 
 characters = json.load(open("./characters.json"))
 diacritics = json.load(open("./diacritics.json"))
@@ -37,13 +45,13 @@ for character in characters:
 
 def generateFont():
 	miracode = fontforge.font()
-	miracode.fontname = "Miracode"
+	miracode.fontname = "Miracode-Bold" if args.style == "Bold" else "Miracode"
 	miracode.familyname = "Miracode"
-	miracode.fullname = "Miracode"
+	miracode.fullname = "Miracode Bold" if args.style == "Bold" else "Miracode"
 	miracode.copyright = "Idrees Hassan, https://github.com/IdreesInc/Miracode"
 	miracode.encoding = "UnicodeFull"
 	miracode.version = "1.0"
-	miracode.weight = "Regular"
+	miracode.weight = args.style
 	miracode.ascent = PIXEL_SIZE * 8
 	miracode.descent = PIXEL_SIZE
 	miracode.em = PIXEL_SIZE * 9
@@ -53,14 +61,27 @@ def generateFont():
 
 	for character in characters:
 		miracode.createChar(character["codepoint"], character["name"])
-		pen = miracode[character["name"]].glyphPen()
-		if character.get("reference"):
-			referencedCharacter = charactersByCodepoint[character["reference"]]
-			drawCharacter(referencedCharacter, miracode[character["name"]], pen)
+		glyph = miracode[character["name"]]
+		if character["codepoint"] in (0xC5, 0xE5, 0xC4, 0xD6) or (character["codepoint"] == 65 and args.style == "Bold"):
+			drawSwedishAccent(glyph, character["codepoint"], charactersByCodepoint,
+			                  diacritics, drawCharacter, bold=args.style == "Bold")
 		else:
-			drawCharacter(character, miracode[character["name"]], pen)
+			pen = glyph.glyphPen()
+			if character.get("reference"):
+				referencedCharacter = charactersByCodepoint[character["reference"]]
+				drawCharacter(referencedCharacter, glyph, pen)
+			else:
+				drawCharacter(character, glyph, pen)
 
-		miracode[character["name"]].width = PIXEL_SIZE * 6
+		if "sideBearing" in character:
+			# Fit an explicitly wide design inside one cell without changing
+			# its vertical stroke thickness or the monospace advance.
+			bearing = character["sideBearing"] * PIXEL_SIZE
+			xMin, _, xMax, _ = glyph.boundingBox()
+			scale = (PIXEL_SIZE * 6 - 2 * bearing) / (xMax - xMin)
+			glyph.transform((scale, 0, 0, 1, bearing - xMin * scale, 0))
+			glyph.round()
+		glyph.width = PIXEL_SIZE * 6
 	print(f"Generated {len(characters)} characters")
 
 	outputDir = "../dist/"
@@ -102,7 +123,9 @@ def generateFont():
 
 	print(f"Generated {len(ligatures)} ligatures")
 	print("Generating TTF font...")
-	miracode.generate(outputDir + "Miracode.ttf")
+	output = outputDir + ("Miracode-Bold.ttf" if args.style == "Bold" else "Miracode.ttf")
+	miracode.generate(output)
+	finalizeFont(output, bold=args.style == "Bold")
 	# print("Generating OTF font...")
 	# miracode.generate(outputDir + "Miracode.otf")
 
@@ -133,6 +156,7 @@ def test():
 		print("All tests passed! 🎉")
 	else:
 		print(f"{failedTests} test(s) failed and {passedTests} tests passed")
+		raise RuntimeError("Source geometry tests failed")
 
 
 def get(pixel, row , col):
@@ -513,7 +537,7 @@ def getEdgesPerPoint(edges):
 		edgesPerPoint[edge[1]].append(edge)
 	return edgesPerPoint
 
-def drawCharacter(character, glyph, pen, xOffset = 0):
+def drawCharacter(character, glyph, pen, xOffset = 0, stroke = None):
 	# print("Drawing character", character["name"])
 	if not character.get("pixels"):
 		# print(f"Character {character['name']} has no pixels")
@@ -535,8 +559,7 @@ def drawCharacter(character, glyph, pen, xOffset = 0):
 		leftMargin += character["leftMargin"]
 	left = leftMargin * PIXEL_SIZE + xOffset
 
-	STROKE = 192
-	HALF = STROKE / 2
+	HALF = (STROKE if stroke is None else stroke) / 2
 	DOT_RADIUS = HALF * 1.5
 
 	# Draw the paths
@@ -623,7 +646,7 @@ def drawCharacter(character, glyph, pen, xOffset = 0):
 	# Return the rightmost edge of the character
 	return xOffset + len(pixels[0]) * PIXEL_SIZE
 
-if "--test" in os.sys.argv:
+if args.test:
 	test()
 else:
 	generateFont()
