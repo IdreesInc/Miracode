@@ -21,6 +21,7 @@ from generate_diacritics import generateDiacritics
 from generate_examples import generateExamples
 from polygonizer import PixelImage, generatePolygons
 from generate_continuous_ligatures import generate_continuous_ligatures 
+from font_metadata import finalizeFont
 
 PIXEL_SIZE = 256
 SQRT_TWO = math.sqrt(2)
@@ -60,7 +61,16 @@ def generateFont():
 		else:
 			drawCharacter(character, miracode[character["name"]], pen)
 
-		miracode[character["name"]].width = PIXEL_SIZE * 6
+		glyph = miracode[character["name"]]
+		if "sideBearing" in character:
+			# Fit an explicitly wide design inside one cell without changing
+			# its vertical stroke thickness or the monospace advance.
+			bearing = character["sideBearing"] * PIXEL_SIZE
+			xMin, _, xMax, _ = glyph.boundingBox()
+			scale = (PIXEL_SIZE * 6 - 2 * bearing) / (xMax - xMin)
+			glyph.transform((scale, 0, 0, 1, bearing - xMin * scale, 0))
+			glyph.round()
+		glyph.width = PIXEL_SIZE * 6
 	print(f"Generated {len(characters)} characters")
 
 	outputDir = "../dist/"
@@ -103,6 +113,7 @@ def generateFont():
 	print(f"Generated {len(ligatures)} ligatures")
 	print("Generating TTF font...")
 	miracode.generate(outputDir + "Miracode.ttf")
+	finalizeFont(outputDir + "Miracode.ttf")
 	# print("Generating OTF font...")
 	# miracode.generate(outputDir + "Miracode.otf")
 
@@ -133,6 +144,7 @@ def test():
 		print("All tests passed! 🎉")
 	else:
 		print(f"{failedTests} test(s) failed and {passedTests} tests passed")
+		raise RuntimeError("Source geometry tests failed")
 
 
 def get(pixel, row , col):

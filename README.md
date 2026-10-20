@@ -66,6 +66,43 @@ After following the installation instructions up above, simply select the "Mirac
 
 ## FAQ
 
+### Building from source
+
+Use Python 3 with the FontForge Python bindings installed. Install the pinned
+packages in `requirements-build.txt` into that same Python environment, then
+run `python miracode.py` from `src/`. The generated font is written to
+`dist/Miracode.ttf`.
+
+From the repository root, run `python tests/check_font.py dist/Miracode.ttf`
+to check accented references, vertical metrics, and monospace metadata.
+
+### Reproducible releases with Nerd Fonts
+
+Use FontForge 20230101's Python bindings and the pinned fontTools dependency.
+From the repository root, run:
+
+```sh
+python tools/build.py
+```
+
+The build generates ordinary Miracode and a single-cell-icon Nerd Font from
+the source, then writes both fonts, licenses, a manifest, checksums, and
+`Miracode-fonts.zip` under `dist/release`. It downloads Nerd Fonts Patcher 3.5.1
+into the user cache and verifies the pinned archive checksum before running it.
+Existing characters take precedence over icon codepoints. Original text and
+ligature advances are checked after patching.
+
+Use `--patcher-archive /path/to/FontPatcher.zip` for a verified offline archive,
+`--base-only` to skip icons, and `--output /path/to/release` to select a directory.
+Only Regular is built; additional weights and obliques are a separate feature.
+
+The release build normalizes timestamps and generated identifiers. With the
+same source, pinned toolchain, and compression runtime, repeated builds produce
+identical font and ZIP bytes. `SOURCE_DATE_EPOCH` can set the release timestamp;
+the default is fixed at 2024-02-10 UTC. This has been verified on Linux; binary
+identity across different platforms and toolchain builds is not assumed.
+
+
 ### What ligatures are available?
 
 <img src="images/ligatures.png" width="300">
