@@ -74,13 +74,13 @@
 		"name": "percent_sign",
 		"codepoint": 37,
 		"pixels": [
-			[0, 0, 0, 0, 1],
+			[1, 0, 0, 0, 1],
 			[1, 0, 0, 1, 0],
 			[0, 0, 0, 1, 0],
 			[0, 0, 1, 0, 0],
 			[0, 1, 0, 0, 0],
 			[0, 1, 0, 0, 1],
-			[1, 0, 0, 0, 0]
+			[1, 0, 0, 0, 1]
 		]
 	},
 	{
@@ -369,14 +369,13 @@
 		"codepoint": 58,
 		"pixels": [
 			[0, 0, 0, 0, 0],
-			[0, 0, 1, 0, 0],
-			[0, 0, 0, 0, 0],
-			[0, 0, 0, 0, 0],
 			[0, 0, 0, 0, 0],
 			[0, 0, 1, 0, 0],
-			[0, 0, 0, 0, 0]
-		],
-		"descent": 0.5
+			[0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0],
+			[0, 0, 1, 0, 0]
+		]
 	},
 	{
 		"character": ";",
@@ -384,15 +383,15 @@
 		"codepoint": 59,
 		"pixels": [
 			[0, 0, 0, 0, 0],
-			[0, 0, 1, 0, 0],
-			[0, 0, 0, 0, 0],
-			[0, 0, 0, 0, 0],
 			[0, 0, 0, 0, 0],
 			[0, 0, 1, 0, 0],
-			[0, 1, 0, 0, 0],
-			[0, 0, 0, 0, 0]
+			[0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0],
+			[0, 0, 1, 0, 0],
+			[0, 1, 0, 0, 0]
 		],
-		"descent": 1.5
+		"descent": 1
 	},
 	{
 		"character": "<",
@@ -1549,8 +1548,7 @@
 			[1, 0, 1, 0, 1, 1],
 			[1, 0, 0, 0, 0, 1],
 			[0, 1, 1, 1, 1, 0]
-		],
-		"diagonals": false
+		]
 	},
 	{
 		"character": "macron",
@@ -2200,6 +2198,22 @@
 		"pixels": [
 			[0, 1, 0, 0, 1],
 			[0, 0, 1, 1, 0],
+			[0, 0, 0, 0, 0],
+			[0, 1, 1, 0, 0],
+			[0, 0, 1, 0, 0],
+			[0, 0, 1, 0, 0],
+			[0, 0, 1, 0, 0],
+			[0, 0, 0, 1, 1]
+		],
+		"leftMargin": -0.5
+	},
+	{
+		"character": "ı",
+		"name": "latin_small_letter_dotless_i",
+		"codepoint": 305,
+		"pixels": [
+			[0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0],
 			[0, 0, 0, 0, 0],
 			[0, 1, 1, 0, 0],
 			[0, 0, 1, 0, 0],
@@ -3647,6 +3661,36 @@
 		"descent": 1
 	},
 	{
+		"character": "Ґ",
+		"name": "cyrillic_capital_letter_ghe_with_upturn",
+		"codepoint": 1168,
+		"pixels": [
+			[0, 0, 0, 0, 1],
+			[0, 0, 0, 0, 1],
+			[1, 1, 1, 1, 1],
+			[1, 0, 0, 0, 0],
+			[1, 0, 0, 0, 0],
+			[1, 0, 0, 0, 0],
+			[1, 0, 0, 0, 0],
+			[1, 0, 0, 0, 0],
+			[1, 0, 0, 0, 0]
+		]
+	},
+	{
+		"character": "ґ",
+		"name": "cyrillic_small_letter_ghe_with_upturn",
+		"codepoint": 1169,
+		"pixels": [
+			[0, 0, 0, 0, 1],
+			[0, 0, 0, 0, 1],
+			[1, 1, 1, 1, 1],
+			[1, 0, 0, 0, 0],
+			[1, 0, 0, 0, 0],
+			[1, 0, 0, 0, 0],
+			[1, 0, 0, 0, 0]
+		]
+	},
+	{
 		"character": "€",
 		"name": "euro_sign",
 		"codepoint": 8364,
@@ -3826,8 +3870,7 @@
 			[1, 0, 1, 1, 0, 1],
 			[1, 1, 0, 0, 1, 1],
 			[0, 1, 1, 1, 1, 0]
-		],
-		"diagonals": false
+		]
 	},
 	{
 		"character": "♥",
@@ -10262,8 +10305,7 @@
 			[1, 1, 1, 1, 1, 1, 1]
 		],
 		"group": "miscellaneous_symbols",
-		"character": "⚀",
-		"diagonals": false
+		"character": "⚀"
 	},
 	{
 		"codepoint": 9857,
@@ -10278,8 +10320,7 @@
 			[1, 1, 1, 1, 1, 1, 1]
 		],
 		"group": "miscellaneous_symbols",
-		"character": "⚁",
-		"diagonals": false
+		"character": "⚁"
 	},
 	{
 		"codepoint": 9858,
@@ -10294,8 +10335,7 @@
 			[1, 1, 1, 1, 1, 1, 1]
 		],
 		"group": "miscellaneous_symbols",
-		"character": "⚂",
-		"diagonals": false
+		"character": "⚂"
 	},
 	{
 		"codepoint": 9859,
@@ -10310,8 +10350,7 @@
 			[1, 1, 1, 1, 1, 1, 1]
 		],
 		"group": "miscellaneous_symbols",
-		"character": "⚃",
-		"diagonals": false
+		"character": "⚃"
 	},
 	{
 		"codepoint": 9860,
@@ -10326,8 +10365,7 @@
 			[1, 1, 1, 1, 1, 1, 1]
 		],
 		"group": "miscellaneous_symbols",
-		"character": "⚄",
-		"diagonals": false
+		"character": "⚄"
 	},
 	{
 		"codepoint": 9861,
@@ -10342,8 +10380,7 @@
 			[1, 1, 1, 1, 1, 1, 1]
 		],
 		"group": "miscellaneous_symbols",
-		"character": "⚅",
-		"diagonals": false
+		"character": "⚅"
 	},
 	{
 		"codepoint": 9889,
@@ -10439,8 +10476,7 @@
 			[0, 1, 1, 1, 1, 1, 0]
 		],
 		"group": "miscellaneous_symbols",
-		"character": "☻",
-		"diagonals": false
+		"character": "☻"
 	},
 	{
 		"codepoint": 9785,
@@ -14447,8 +14483,7 @@
 		],
 		"group": "specials",
 		"character": "�",
-		"descent": 1,
-		"diagonals": false
+		"descent": 1
 	},
 	{
 		"codepoint": 5794,
@@ -17930,5 +17965,395 @@
 		],
 		"group": "cjk_symbols_and_punctuation",
 		"character": "〒"
+	},
+	{
+		"codepoint": 60224,
+		"name": "standard_galactic_alphabet_a",
+		"pixels": [
+			[0, 0, 1, 1, 0],
+			[0, 1, 0, 0, 1],
+			[0, 1, 0, 0, 0],
+			[0, 1, 0, 0, 0],
+			[0, 1, 0, 0, 0],
+			[0, 1, 0, 0, 0],
+			[1, 1, 0, 0, 0]
+		],
+		"group": "standard_galactic_alphabet",
+		"character": ""
+	},
+	{
+		"codepoint": 60225,
+		"name": "standard_galactic_alphabet_b",
+		"pixels": [
+			[0, 0, 1, 0, 0],
+			[0, 0, 1, 0, 0],
+			[0, 0, 1, 0, 0],
+			[0, 0, 1, 0, 0],
+			[0, 0, 0, 1, 0],
+			[0, 0, 0, 0, 1],
+			[1, 1, 1, 1, 1]
+		],
+		"group": "standard_galactic_alphabet",
+		"character": ""
+	},
+		{
+		"codepoint": 60226,
+		"name": "standard_galactic_alphabet_c",
+		"pixels": [
+			[0, 0, 1, 0, 0],
+			[0, 0, 0, 0, 0],
+			[0, 0, 1, 0, 0],
+			[0, 0, 1, 0, 0],
+			[0, 0, 1, 1, 0],
+			[0, 0, 0, 1, 0],
+			[0, 0, 0, 1, 0]
+		],
+		"group": "standard_galactic_alphabet",
+		"character": ""
+	},
+	{
+		"codepoint": 60227,
+		"name": "standard_galactic_alphabet_d",
+		"pixels": [
+			[1, 1, 1, 1, 1],
+			[0, 0, 0, 0, 0],
+			[1, 1, 0, 0, 0],
+			[0, 0, 1, 0, 0],
+			[0, 0, 0, 1, 1],
+			[0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0]
+		],
+		"group": "standard_galactic_alphabet",
+		"character": ""
+	},
+	{
+		"codepoint": 60228,
+		"name": "standard_galactic_alphabet_e",
+		"pixels": [
+			[1, 0, 0, 0, 1],
+			[1, 0, 0, 0, 0],
+			[1, 0, 0, 0, 0],
+			[1, 0, 0, 0, 0],
+			[1, 0, 0, 0, 0],
+			[1, 0, 0, 0, 0],
+			[1, 1, 1, 1, 1]
+		],
+		"group": "standard_galactic_alphabet",
+		"character": ""
+	},
+	{
+		"codepoint": 60229,
+		"name": "standard_galactic_alphabet_f",
+		"pixels": [
+			[1, 1, 1, 1, 1],
+			[0, 0, 0, 0, 0],
+			[1, 0, 1, 0, 1],
+			[0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0]
+		],
+		"group": "standard_galactic_alphabet",
+		"character": ""
+	},
+	{
+		"codepoint": 60230,
+		"name": "standard_galactic_alphabet_g",
+		"pixels": [
+			[0, 0, 0, 1, 0],
+			[0, 0, 0, 1, 0],
+			[0, 0, 0, 1, 0],
+			[0, 1, 1, 1, 0],
+			[0, 0, 0, 1, 0],
+			[0, 0, 0, 1, 0],
+			[0, 0, 0, 1, 0]
+		],
+		"group": "standard_galactic_alphabet",
+		"character": ""
+	},
+	{
+		"codepoint": 60231,
+		"name": "standard_galactic_alphabet_h",
+		"pixels": [
+			[1, 1, 1, 1, 1],
+			[0, 0, 0, 0, 0],
+			[1, 1, 1, 1, 1],
+			[0, 0, 1, 0, 0],
+			[0, 0, 1, 0, 0],
+			[0, 0, 1, 0, 0],
+			[0, 0, 1, 0, 0]
+		],
+		"group": "standard_galactic_alphabet",
+		"character": ""
+	},
+	{
+		"codepoint": 60232,
+		"name": "standard_galactic_alphabet_i",
+		"pixels": [
+			[0, 0, 1, 0, 0],
+			[0, 0, 1, 0, 0],
+			[0, 0, 1, 0, 0],
+			[0, 0, 0, 0, 0],
+			[0, 0, 1, 0, 0],
+			[0, 0, 1, 0, 0],
+			[0, 0, 1, 0, 0]
+		],
+		"group": "standard_galactic_alphabet",
+		"character": ""
+	},
+	{
+		"codepoint": 60233,
+		"name": "standard_galactic_alphabet_j",
+		"pixels": [
+			[0, 0, 1, 0, 0],
+			[0, 0, 1, 0, 0],
+			[0, 0, 0, 0, 0],
+			[0, 0, 1, 0, 0],
+			[0, 0, 0, 0, 0],
+			[0, 0, 1, 0, 0],
+			[0, 0, 1, 0, 0]
+		],
+		"group": "standard_galactic_alphabet",
+		"character": ""
+	},
+	{
+		"codepoint": 60234,
+		"name": "standard_galactic_alphabet_k",
+		"pixels": [
+			[0, 0, 1, 0, 0],
+			[0, 0, 1, 0, 0],
+			[0, 0, 1, 0, 0],
+			[1, 0, 1, 0, 1],
+			[0, 0, 1, 0, 0],
+			[0, 0, 1, 0, 0],
+			[0, 0, 1, 0, 0]
+		],
+		"group": "standard_galactic_alphabet",
+		"character": ""
+	},
+	{
+		"codepoint": 60235,
+		"name": "standard_galactic_alphabet_l",
+		"pixels": [
+			[0, 1, 0, 0, 0],
+			[0, 1, 0, 1, 0],
+			[0, 1, 0, 0, 0],
+			[0, 1, 0, 0, 0],
+			[0, 1, 0, 0, 0],
+			[0, 1, 0, 1, 0],
+			[0, 1, 0, 0, 0]
+		],
+		"group": "standard_galactic_alphabet",
+		"character": ""
+	},
+	{
+		"codepoint": 60236,
+		"name": "standard_galactic_alphabet_m",
+		"pixels": [
+			[1, 0, 0, 0, 1],
+			[0, 0, 0, 0, 1],
+			[0, 0, 0, 0, 1],
+			[0, 0, 0, 0, 1],
+			[0, 0, 0, 0, 1],
+			[0, 0, 0, 0, 1],
+			[1, 1, 1, 1, 1]
+		],
+		"group": "standard_galactic_alphabet",
+		"character": ""
+	},
+	{
+		"codepoint": 60237,
+		"name": "standard_galactic_alphabet_n",
+		"pixels": [
+			[1, 0, 0, 1, 0],
+			[1, 0, 0, 1, 0],
+			[0, 0, 0, 1, 0],
+			[0, 0, 1, 0, 0],
+			[0, 0, 1, 0, 0],
+			[0, 1, 0, 0, 0],
+			[1, 0, 0, 0, 0]
+		],
+		"group": "standard_galactic_alphabet",
+		"character": ""
+	},
+	{
+		"codepoint": 60238,
+		"name": "standard_galactic_alphabet_o",
+		"pixels": [
+			[1, 1, 1, 1, 0],
+			[0, 0, 0, 1, 0],
+			[0, 0, 0, 1, 0],
+			[0, 0, 1, 0, 0],
+			[0, 0, 1, 0, 0],
+			[0, 1, 0, 0, 0],
+			[1, 0, 0, 0, 0]
+		],
+		"group": "standard_galactic_alphabet",
+		"character": ""
+	},
+	{
+		"codepoint": 60239,
+		"name": "standard_galactic_alphabet_p",
+		"pixels": [
+			[0, 1, 0, 1, 0],
+			[0, 0, 0, 1, 0],
+			[0, 1, 0, 1, 0],
+			[0, 1, 0, 1, 0],
+			[0, 1, 0, 1, 0],
+			[0, 1, 0, 0, 0],
+			[0, 1, 0, 1, 0]
+		],
+		"group": "standard_galactic_alphabet",
+		"character": ""
+	},
+	{
+		"codepoint": 60240,
+		"name": "standard_galactic_alphabet_q",
+		"pixels": [
+			[0, 0, 1, 0, 0],
+			[0, 0, 0, 0, 0],
+			[1, 1, 1, 1, 1],
+			[0, 0, 0, 0, 1],
+			[0, 0, 0, 0, 1],
+			[0, 0, 0, 0, 1],
+			[1, 1, 1, 1, 1]
+		],
+		"group": "standard_galactic_alphabet",
+		"character": ""
+	},
+	{
+		"codepoint": 60241,
+		"name": "standard_galactic_alphabet_r",
+		"pixels": [
+			[1, 0, 0, 1, 0],
+			[0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0],
+			[1, 0, 0, 1, 0]
+		],
+		"group": "standard_galactic_alphabet",
+		"character": ""
+	},
+	{
+		"codepoint": 60242,
+		"name": "standard_galactic_alphabet_s",
+		"pixels": [
+			[0, 1, 0, 0, 0],
+			[0, 1, 0, 0, 0],
+			[0, 1, 0, 0, 0],
+			[0, 1, 1, 0, 0],
+			[0, 0, 1, 0, 0],
+			[0, 0, 1, 0, 0],
+			[0, 0, 1, 0, 0]
+		],
+		"group": "standard_galactic_alphabet",
+		"character": ""
+	},
+	{
+		"codepoint": 60243,
+		"name": "standard_galactic_alphabet_t",
+		"pixels": [
+			[1, 1, 1, 1, 1],
+			[0, 0, 0, 0, 1],
+			[0, 0, 0, 0, 1],
+			[0, 0, 0, 0, 1],
+			[0, 0, 0, 0, 1],
+			[0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 1]
+		],
+		"group": "standard_galactic_alphabet",
+		"character": ""
+	},
+	{
+		"codepoint": 60244,
+		"name": "standard_galactic_alphabet_u",
+		"pixels": [
+			[0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0],
+			[0, 1, 0, 1, 0],
+			[0, 0, 0, 0, 0],
+			[1, 1, 1, 1, 1],
+			[0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0]
+		],
+		"group": "standard_galactic_alphabet",
+		"character": ""
+	},
+	{
+		"codepoint": 60245,
+		"name": "standard_galactic_alphabet_v",
+		"pixels": [
+			[0, 0, 1, 0, 0],
+			[0, 0, 1, 0, 0],
+			[0, 0, 1, 0, 0],
+			[0, 0, 1, 0, 0],
+			[1, 1, 1, 1, 1],
+			[0, 0, 0, 0, 0],
+			[1, 1, 1, 1, 1]
+		],
+		"group": "standard_galactic_alphabet",
+		"character": ""
+	},
+	{
+		"codepoint": 60246,
+		"name": "standard_galactic_alphabet_w",
+		"pixels": [
+			[0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0],
+			[0, 0, 1, 0, 0],
+			[0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0],
+			[1, 0, 0, 0, 1],
+			[0, 0, 0, 0, 0]
+		],
+		"group": "standard_galactic_alphabet",
+		"character": ""
+	},
+	{
+		"codepoint": 60247,
+		"name": "standard_galactic_alphabet_x",
+		"pixels": [
+			[1, 0, 0, 0, 1],
+			[0, 0, 0, 1, 0],
+			[0, 0, 0, 1, 0],
+			[0, 0, 1, 0, 0],
+			[0, 1, 0, 0, 0],
+			[0, 1, 0, 0, 0],
+			[1, 0, 0, 0, 0]
+		],
+		"group": "standard_galactic_alphabet",
+		"character": ""
+	},
+	{
+		"codepoint": 60248,
+		"name": "standard_galactic_alphabet_y",
+		"pixels": [
+			[0, 1, 0, 1, 0],
+			[0, 1, 0, 1, 0],
+			[0, 1, 0, 1, 0],
+			[0, 1, 0, 1, 0],
+			[0, 1, 0, 1, 0],
+			[0, 1, 0, 1, 0],
+			[0, 1, 0, 1, 0]
+		],
+		"group": "standard_galactic_alphabet",
+		"character": ""
+	},
+	{
+		"codepoint": 60249,
+		"name": "standard_galactic_alphabet_z",
+		"pixels": [
+			[0, 0, 1, 0, 0],
+			[0, 1, 0, 1, 0],
+			[1, 0, 0, 0, 1],
+			[1, 0, 0, 0, 1],
+			[1, 0, 0, 0, 1],
+			[1, 0, 0, 0, 1],
+			[1, 0, 0, 0, 1]
+		],
+		"group": "standard_galactic_alphabet",
+		"character": ""
 	}
 ]

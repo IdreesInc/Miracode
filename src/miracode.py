@@ -24,6 +24,7 @@ from generate_continuous_ligatures import generate_continuous_ligatures
 
 PIXEL_SIZE = 256
 SQRT_TWO = math.sqrt(2)
+ITALIC_RATIO = math.tan(math.radians(10))
 
 characters = json.load(open("./characters.json"))
 diacritics = json.load(open("./diacritics.json"))
@@ -36,31 +37,44 @@ for character in characters:
 	charactersByCodepoint[character["codepoint"]] = character
 
 def generateFont():
-	miracode = fontforge.font()
-	miracode.fontname = "Miracode"
-	miracode.familyname = "Miracode"
-	miracode.fullname = "Miracode"
-	miracode.copyright = "Idrees Hassan, https://github.com/IdreesInc/Miracode"
-	miracode.encoding = "UnicodeFull"
-	miracode.version = "1.0"
-	miracode.weight = "Regular"
-	miracode.ascent = PIXEL_SIZE * 8
-	miracode.descent = PIXEL_SIZE
-	miracode.em = PIXEL_SIZE * 9
-	miracode.upos = -PIXEL_SIZE # Underline position
-	miracode.addLookup("ligatures", "gsub_ligature", (), (("liga",(("dflt",("dflt")),("latn",("dflt")))),))
-	miracode.addLookupSubtable("ligatures", "ligatures-subtable")
+	fontStyles = (
+		("", "Regular", 0, 0x40, 6, 0, False, False),
+		("-Bold", "Bold", 1, 0x20, 8, 0, True, False),
+		("-Italic", "Italic", 2, 1, 6, -10, False, True),
+		("-BoldItalic", "Bold Italic", 3, 0x21, 8, -10, True, True),
+	)
+	fonts = []
+	for suffix, styleName, macstyle, stylemap, panoseWeight, italicAngle, bold, italic in fontStyles:
+		miracode = fontforge.font()
+		miracode.fontname = f"Miracode{suffix}"
+		miracode.familyname = "Miracode"
+		miracode.fullname = "Miracode" if not suffix else f"Miracode {styleName}"
+		miracode.copyright = "Idrees Hassan, https://github.com/IdreesInc/Miracode"
+		miracode.encoding = "UnicodeFull"
+		miracode.version = "1.1"
+		miracode.weight = "Bold" if bold else "Regular"
+		miracode.macstyle = macstyle
+		miracode.os2_stylemap = stylemap
+		panose = list(miracode.os2_panose)
+		panose[2] = panoseWeight
+		panose[3] = 9
+		miracode.os2_panose = tuple(panose)
+		if italicAngle:
+			miracode.italicangle = italicAngle
+		miracode.ascent = PIXEL_SIZE * 8
+		miracode.descent = PIXEL_SIZE
+		miracode.em = PIXEL_SIZE * 9
+		miracode.upos = -PIXEL_SIZE
+		miracode.addLookup("ligatures", "gsub_ligature", (), (("liga", (("dflt", ("dflt")), ("latn", ("dflt")))),))
+		miracode.addLookupSubtable("ligatures", "ligatures-subtable")
+		fonts.append((miracode, suffix, bold, italic))
 
 	for character in characters:
-		miracode.createChar(character["codepoint"], character["name"])
-		pen = miracode[character["name"]].glyphPen()
-		if character.get("reference"):
-			referencedCharacter = charactersByCodepoint[character["reference"]]
-			drawCharacter(referencedCharacter, miracode[character["name"]], pen)
-		else:
-			drawCharacter(character, miracode[character["name"]], pen)
-
-		miracode[character["name"]].width = PIXEL_SIZE * 6
+		for miracode, _, bold, _ in fonts:
+			miracode.createChar(character["codepoint"], character["name"])
+			pen = miracode[character["name"]].glyphPen()
+			drawCharacter(character, miracode[character["name"]], pen, bold=bold)
+			miracode[character["name"]].width = PIXEL_SIZE * 6
 	print(f"Generated {len(characters)} characters")
 
 	outputDir = "../dist/"
@@ -72,39 +86,49 @@ def generateFont():
 	# miracode.generate(outputDir + "Miracode-no-ligatures.ttf")
 
 	for ligature in ligatures:
-		lig = None
-		if ligature.get("pixels"):
-			# Basic ligature
-			lig = miracode.createChar(-1, ligature["name"])
-			pen = miracode[ligature["name"]].glyphPen()
-			drawCharacter(ligature, lig, pen)
-			miracode[ligature["name"]].width = PIXEL_SIZE * len(ligature["sequence"]) * 6
-		elif ligature.get("chain"):
-			# Chain ligature
-			chain = ligature["chain"]
-			lig = miracode.createChar(-1, ligature["name"])
-			pen = miracode[ligature["name"]].glyphPen()
-			xOffset = 0
-			for character in chain:
-				if character.get("pixels"):
-					xOffset = drawCharacter(character, lig, pen, xOffset)
-				elif character.get("reference"):
-					linkedCharacter = charactersByCodepoint[character["reference"]]
-					xOffset = drawCharacter(linkedCharacter, lig, pen, xOffset)
-				else:
-					print(f"Unexpected character in ligature {ligature['name']}: {character}")
-				xOffset += PIXEL_SIZE
-		else:
-			print(f"Unexpected ligature type: {ligature}")
-			continue
-		miracode[ligature["name"]].width = PIXEL_SIZE * len(ligature["sequence"]) * 6
-		lig.addPosSub("ligatures-subtable", tuple(map(lambda codepoint: charactersByCodepoint[codepoint]["name"], ligature["sequence"])))
+		glyphName = ligature["name"].replace(" ", "_")
+		for miracode, _, bold, _ in fonts:
+			if ligature.get("pixels"):
+				# Basic ligature
+				lig = miracode.createChar(-1, glyphName)
+				pen = miracode[glyphName].glyphPen()
+				drawCharacter(ligature, lig, pen, bold=bold)
+			elif ligature.get("chain"):
+				# Chain ligature
+				chain = ligature["chain"]
+				lig = miracode.createChar(-1, glyphName)
+				pen = miracode[glyphName].glyphPen()
+				xOffset = 0
+				for character in chain:
+					if character.get("pixels") or character.get("reference") or character.get("diacritic"):
+						xOffset = drawCharacter(character, lig, pen, xOffset, bold=bold)
+					else:
+						print(f"Unexpected character in ligature {ligature['name']}: {character}")
+					xOffset += PIXEL_SIZE
+			else:
+				print(f"Unexpected ligature type: {ligature}")
+				continue
+			miracode[glyphName].width = PIXEL_SIZE * len(ligature["sequence"]) * 6
+			lig.addPosSub("ligatures-subtable", tuple(map(lambda codepoint: charactersByCodepoint[codepoint]["name"], ligature["sequence"])))
 
 	print(f"Generated {len(ligatures)} ligatures")
-	print("Generating TTF font...")
-	miracode.generate(outputDir + "Miracode.ttf")
-	# print("Generating OTF font...")
-	# miracode.generate(outputDir + "Miracode.otf")
+	for miracode, suffix, bold, italic in fonts:
+		if italic:
+			for glyph in miracode.glyphs():
+				if not glyph.foreground:
+					continue
+				glyph.transform((1, 0, ITALIC_RATIO, 1, 0, 0))
+				glyph.removeOverlap()
+		print(f"Generating {miracode.fontname}...")
+		miracode.generate(outputDir + f"Miracode{suffix}.ttf")
+
+	print("Generating Miracode.ttc...")
+	fonts[0][0].generateTtc(
+		outputDir + "Miracode.ttc",
+		[font for font, _, _, _ in fonts[1:]],
+		ttcflags=("merge",),
+		layer=1,
+	)
 
 def test():
 	print("Testing...")
@@ -453,6 +477,59 @@ def countNeighbors(pixels, row, col):
 		count += 1
 	return count
 
+def resolveCharacterPixels(character, visited=None):
+	if visited is None:
+		visited = set()
+
+	codepoint = character.get("codepoint")
+	if codepoint is not None:
+		if codepoint in visited:
+			raise ValueError(f"Circular character reference at codepoint {codepoint}")
+		visited = visited | {codepoint}
+
+	if "pixels" in character:
+		pixels = [list(row) for row in character["pixels"]]
+		attributes = {}
+	elif "reference" in character:
+		referencedCharacter = charactersByCodepoint.get(character["reference"])
+		if referencedCharacter is None:
+			raise KeyError(f"Unknown character reference: {character['reference']}")
+		pixels, attributes = resolveCharacterPixels(referencedCharacter, visited)
+		attributes = attributes.copy()
+	elif "diacritic" in character:
+		pixels, attributes = [], {}
+	else:
+		return None, {}
+
+	for attribute in ("descent", "leftMargin", "diagonals"):
+		if attribute in character:
+			attributes[attribute] = character[attribute]
+
+	if "diacritic" in character:
+		diacritic = diacritics[character["diacritic"]]["pixels"]
+		firstInkRow = next(
+			(row for row, pixelsRow in enumerate(pixels) if any(pixelsRow)),
+			len(pixels) - 1,
+		)
+		diacriticSpace = int(character.get("diacriticSpace", 0))
+		baseOffset = max(0, len(diacritic) + diacriticSpace - firstInkRow)
+		diacriticOffset = max(0, firstInkRow - len(diacritic) - diacriticSpace)
+		width = max(
+			max(map(len, pixels), default=0),
+			max(map(len, diacritic), default=0),
+		)
+		composed = [[0] * width for _ in range(baseOffset + len(pixels))]
+
+		for row, pixelsRow in enumerate(diacritic):
+			for col, pixel in enumerate(pixelsRow):
+				composed[diacriticOffset + row][col] |= pixel
+		for row, pixelsRow in enumerate(pixels):
+			for col, pixel in enumerate(pixelsRow):
+				composed[baseOffset + row][col] |= pixel
+		pixels = composed
+
+	return pixels, attributes
+
 def drawCircle(pen, x, y, radius):
 	# Draw clockwise
 	VAL = 0.5522847498 # This is (4/3) * (sqrt(2) - 1)
@@ -513,11 +590,13 @@ def getEdgesPerPoint(edges):
 		edgesPerPoint[edge[1]].append(edge)
 	return edgesPerPoint
 
-def drawCharacter(character, glyph, pen, xOffset = 0):
+def drawCharacter(character, glyph, pen, xOffset = 0, bold = False):
 	# print("Drawing character", character["name"])
-	if not character.get("pixels"):
+	pixels, attributes = resolveCharacterPixels(character)
+	if not pixels:
 		# print(f"Character {character['name']} has no pixels")
 		return xOffset
+	character = {**attributes, **character, "pixels": pixels}
 	drawDiagonals = True
 	if "diagonals" in character:
 		drawDiagonals = character["diagonals"]
@@ -535,7 +614,7 @@ def drawCharacter(character, glyph, pen, xOffset = 0):
 		leftMargin += character["leftMargin"]
 	left = leftMargin * PIXEL_SIZE + xOffset
 
-	STROKE = 192
+	STROKE = 192 + (PIXEL_SIZE * 0.200 if bold else 0)
 	HALF = STROKE / 2
 	DOT_RADIUS = HALF * 1.5
 
